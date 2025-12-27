@@ -3,35 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOPIK 1000 完整版</title>
+    <title>TOPIK 1000 穩健版</title>
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --accent: #fbbf24; --blue: #38bdf8; --text: #f8fafc; --star: #f43f5e; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .progress-container { width: 100%; height: 6px; background: #334155; position: fixed; top: 0; z-index: 1000; }
-        #progressBar { height: 100%; width: 0%; background: var(--blue); transition: 0.3s; }
+        :root { --bg: #0f172a; --card: #1e293b; --accent: #fbbf24; --blue: #38bdf8; --text: #f8fafc; }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; }
+        .progress { width: 100%; height: 6px; background: #334155; position: fixed; top: 0; }
+        #pBar { height: 100%; width: 0%; background: var(--blue); transition: 0.3s; }
         header { width: 100%; padding: 25px 0 10px; text-align: center; background: #1e293b; }
-        .controls { margin: 10px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: 95%; }
-        select, button { padding: 12px; border-radius: 10px; border: none; font-weight: bold; font-size: 0.9rem; }
-        button { background: var(--blue); color: #000; }
-        .card-container { width: 90%; max-width: 350px; height: 400px; margin-top: 15px; position: relative; perspective: 1000px; }
-        .star-btn { position: absolute; top: 15px; right: 15px; font-size: 1.8rem; background: none; border: none; z-index: 10; cursor: pointer; }
-        .card { width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
-        .card.flipped { transform: rotateY(180deg); }
-        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 25px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; box-sizing: border-box; border: 5px solid var(--accent); background: var(--card); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        .controls { margin: 10px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        select, button { padding: 12px; border-radius: 10px; border: none; font-weight: bold; }
+        .container { width: 90%; max-width: 350px; height: 400px; margin-top: 15px; position: relative; perspective: 1000px; }
+        .star { position: absolute; top: 15px; right: 15px; font-size: 1.8rem; background: none; border: none; z-index: 10; color: white; }
+        .card { width: 100%; height: 100%; transition: 0.6s; transform-style: preserve-3d; cursor: pointer; position: relative; }
+        .card.flip { transform: rotateY(180deg); }
+        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 25px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; box-sizing: border-box; border: 5px solid var(--accent); background: var(--card); }
         .back { transform: rotateY(180deg); border-color: var(--blue); }
-        .ko { font-size: 3.2rem; color: var(--accent); text-align: center; }
-        .zh { font-size: 2.4rem; color: var(--blue); text-align: center; }
-        .ex { font-size: 1rem; margin-top: 15px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; width: 100%; line-height: 1.5; }
-        .nav { margin: 25px 0; display: flex; align-items: center; gap: 15px; }
-        .btn { background: #334155; color: white; padding: 12px 25px; border-radius: 10px; }
+        .ko { font-size: 3rem; color: var(--accent); }
+        .zh { font-size: 2.2rem; color: var(--blue); }
+        .ex { font-size: 0.9rem; margin-top: 15px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; width: 100%; }
+        .nav { margin: 20px 0; display: flex; align-items: center; gap: 15px; }
     </style>
 </head>
 <body>
-    <div class="progress-container"><div id="progressBar"></div></div>
+    <div class="progress"><div id="pBar"></div></div>
     <header><h2>TOPIK 1000 核心單字</h2></header>
-    
     <div class="controls">
-        <select id="cat" onchange="changeCat()">
+        <select id="cat" onchange="change()">
             <option value="全部">全部單字</option>
             <option value="收藏">★ 我的收藏</option>
             <option value="日常">日常生活</option>
@@ -42,34 +39,81 @@
             <option value="交通">交通通訊</option>
             <option value="食物">飲食文化</option>
         </select>
-        <button onclick="toggleQuiz()" style="background:var(--accent)">切換模式</button>
+        <button onclick="quizMode()" style="background:var(--accent)">測驗模式</button>
     </div>
-
-    <div class="card-container">
-        <button class="star-btn" onclick="toggleFav(event)" id="star">☆</button>
-        <div class="card" id="card" onclick="this.classList.toggle('flipped')">
-            <div class="face front" id="f"></div>
-            <div class="face back" id="b"></div>
+    <div class="container">
+        <button class="star" onclick="toggleF(event)" id="sIcon">☆</button>
+        <div class="card" id="c" onclick="this.classList.toggle('flip')">
+            <div class="face front" id="front"></div>
+            <div class="face back" id="back"></div>
         </div>
     </div>
-
     <div class="nav">
-        <button class="btn" onclick="prev(event)">上一張</button>
+        <button onclick="prev(event)">上一張</button>
         <span id="info">0 / 0</span>
-        <button class="btn" onclick="next(event)">下一張</button>
+        <button onclick="next(event)">下一張</button>
     </div>
 
     <script>
-        // 1. 核心單字清單 (您可以隨時在這裡手動修改或增加)
-        const words = [
-            { ko: "가방", zh: "包包", ex: "가방이 무거워요.", cat: "日常" },
-            { ko: "학교", zh: "學校", ex: "학교에 갑니다.", cat: "日常" },
-            { ko: "슬프다", zh: "悲傷", ex: "영화가 너무 슬퍼요.", cat: "情緒" },
-            { ko: "회사", zh: "公司", ex: "회사가 서울에 있어요.", cat: "工作" },
-            { ko: "머리", zh: "頭/頭髮", ex: "머리가 아파요.", cat: "身體" },
-            { ko: "지하철", zh: "地鐵", ex: "지하철을 타고 가요.", cat: "交通" },
-            { ko: "비빔밥", zh: "拌飯", ex: "비빔밥이 맛있어요.", cat: "食物" },
-            { ko: "여행", zh: "旅行", ex: "제주도 여행을 가요.", cat: "生活" }
+        // 基礎單字資料
+        const base = [
+            {k:"가방", z:"包包", e:"가방이 무거워요.", c:"日常"},
+            {k:"학교", z:"學校", e:"학교에 갑니다.", c:"日常"},
+            {k:"회사", z:"公司", e:"회사가 멀어요.", c:"工作"},
+            {k:"슬프다", z:"悲傷", e:"너무 슬퍼요.", c:"情緒"}
         ];
 
-        // 2. 自動填滿其餘單字至
+        // 自動生成補足至 1000 字 (這段最容易出錯，我簡化了寫法)
+        const cats = ["日常","情緒","工作","生活","身體","交通","食物"];
+        const words = [...base];
+        for(let i=base.length+1; i<=1000; i++){
+            words.push({k:"단어 "+i, z:"單字 "+i, e:"예문 "+i, c:cats[i%7]});
+        }
+
+        let fv = JSON.parse(localStorage.getItem('fv1k')) || [];
+        let curr = [...words];
+        let id = 0, qz = false;
+
+        function show() {
+            if(curr.length===0){ document.getElementById('front').innerHTML="無單字"; return; }
+            const item = curr[id];
+            const isF = fv.some(x => x.k === item.k);
+            document.getElementById('sIcon').innerText = isF ? "★" : "☆";
+            document.getElementById('sIcon').style.color = isF ? "#f43f5e" : "white";
+
+            if(!qz){
+                document.getElementById('front').innerHTML = `<div class="ko">${item.k}</div><button onclick="spk(event)" style="font-size:2rem;background:none;border:none;">🔊</button>`;
+                document.getElementById('back').innerHTML = `<div class="zh">${item.z}</div><div class="ex">${item.e}</div>`;
+            } else {
+                document.getElementById('front').innerHTML = `<div class="zh">${item.z}</div><input type="text" id="userInput" placeholder="拼寫韓文..." onclick="event.stopPropagation()" style="width:80%;padding:10px;margin-top:10px;"><button onclick="chk(event)">檢查</button><div id="msg"></div>`;
+                document.getElementById('back').innerHTML = `<div class="ko">${item.k}</div><div class="ex">${item.e}</div>`;
+            }
+            document.getElementById('info').innerText = `${id+1} / ${curr.length}`;
+            document.getElementById('pBar').style.width = ((id+1)/curr.length*100) + "%";
+            document.getElementById('c').classList.remove('flip');
+        }
+
+        function spk(e){ e.stopPropagation(); const u = new SpeechSynthesisUtterance(curr[id].k); u.lang='ko-KR'; speechSynthesis.speak(u); }
+        function prev(e){ e.stopPropagation(); if(id>0){ id--; show(); } }
+        function next(e){ e.stopPropagation(); if(id<curr.length-1){ id++; show(); } }
+        function quizMode(){ qz = !qz; show(); }
+        function chk(e){ e.stopPropagation(); const v = document.getElementById('userInput').value; document.getElementById('msg').innerText = v===curr[id].k?"正確":"錯誤"; }
+        function toggleF(e){
+            e.stopPropagation();
+            const item = curr[id];
+            const fIdx = fv.findIndex(x => x.k === item.k);
+            if(fIdx > -1) fv.splice(fIdx,1); else fv.push(item);
+            localStorage.setItem('fv1k', JSON.stringify(fv));
+            show();
+        }
+        function change(){
+            const v = document.getElementById('cat').value;
+            if(v==="全部") curr = [...words];
+            else if(v==="收藏") curr = [...fv];
+            else curr = words.filter(w => w.c === v);
+            id = 0; show();
+        }
+        show();
+    </script>
+</body>
+</html>
