@@ -3,40 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOPIK 1000 終極版</title>
+    <title>TOPIK 1000 完整版</title>
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --accent: #fbbf24; --blue: #38bdf8; --text: #f8fafc; }
+        :root { --bg: #0f172a; --card: #1e293b; --accent: #fbbf24; --blue: #38bdf8; --text: #f8fafc; --star: #f43f5e; }
         body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .progress-container { width: 100%; height: 6px; background: #334155; position: fixed; top: 0; }
+        .progress-container { width: 100%; height: 6px; background: #334155; position: fixed; top: 0; z-index: 1000; }
         #progressBar { height: 100%; width: 0%; background: var(--blue); transition: 0.3s; }
-        header { width: 100%; padding: 20px 0; text-align: center; background: #1e293b; }
-        .controls { margin: 10px; display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
-        select, button { padding: 10px; border-radius: 8px; border: none; font-weight: bold; }
+        header { width: 100%; padding: 25px 0 10px; text-align: center; background: #1e293b; }
+        .controls { margin: 10px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: 95%; }
+        select, button { padding: 12px; border-radius: 10px; border: none; font-weight: bold; font-size: 0.9rem; }
+        button { background: var(--blue); color: #000; }
         .card-container { width: 90%; max-width: 350px; height: 400px; margin-top: 15px; position: relative; perspective: 1000px; }
-        .star-btn { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; background: none; border: none; z-index: 10; cursor: pointer; color: white; }
+        .star-btn { position: absolute; top: 15px; right: 15px; font-size: 1.8rem; background: none; border: none; z-index: 10; cursor: pointer; }
         .card { width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
         .card.flipped { transform: rotateY(180deg); }
-        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; border: 4px solid var(--accent); background: var(--card); }
+        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 25px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; box-sizing: border-box; border: 5px solid var(--accent); background: var(--card); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
         .back { transform: rotateY(180deg); border-color: var(--blue); }
-        .ko { font-size: 3rem; color: var(--accent); }
-        .zh { font-size: 2.2rem; color: var(--blue); }
-        .ex { font-size: 1rem; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; width: 100%; }
+        .ko { font-size: 3.2rem; color: var(--accent); text-align: center; }
+        .zh { font-size: 2.4rem; color: var(--blue); text-align: center; }
+        .ex { font-size: 1rem; margin-top: 15px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; width: 100%; line-height: 1.5; }
         .nav { margin: 25px 0; display: flex; align-items: center; gap: 15px; }
-        .btn { background: #334155; color: white; padding: 10px 20px; }
+        .btn { background: #334155; color: white; padding: 12px 25px; border-radius: 10px; }
     </style>
 </head>
 <body>
     <div class="progress-container"><div id="progressBar"></div></div>
     <header><h2>TOPIK 1000 核心單字</h2></header>
+    
     <div class="controls">
         <select id="cat" onchange="changeCat()">
             <option value="全部">全部單字</option>
             <option value="收藏">★ 我的收藏</option>
-            <option value="日常">日常</option>
-            <option value="工作">工作</option>
+            <option value="日常">日常生活</option>
+            <option value="情緒">情緒心理</option>
+            <option value="工作">職場社會</option>
+            <option value="生活">休閒旅遊</option>
+            <option value="身體">身體器官</option>
+            <option value="交通">交通通訊</option>
+            <option value="食物">飲食文化</option>
         </select>
-        <button onclick="toggleQuiz()">測驗模式</button>
+        <button onclick="toggleQuiz()" style="background:var(--accent)">切換模式</button>
     </div>
+
     <div class="card-container">
         <button class="star-btn" onclick="toggleFav(event)" id="star">☆</button>
         <div class="card" id="card" onclick="this.classList.toggle('flipped')">
@@ -44,6 +52,7 @@
             <div class="face back" id="b"></div>
         </div>
     </div>
+
     <div class="nav">
         <button class="btn" onclick="prev(event)">上一張</button>
         <span id="info">0 / 0</span>
@@ -51,68 +60,16 @@
     </div>
 
     <script>
-        // 核心單字資料
+        // 1. 核心單字清單 (您可以隨時在這裡手動修改或增加)
         const words = [
             { ko: "가방", zh: "包包", ex: "가방이 무거워요.", cat: "日常" },
             { ko: "학교", zh: "學校", ex: "학교에 갑니다.", cat: "日常" },
-            { ko: "회사", zh: "公司", ex: "회사가 멀어요.", cat: "工作" },
-            { ko: "공부", zh: "學習", ex: "한국어를 공부해요.", cat: "日常" }
+            { ko: "슬프다", zh: "悲傷", ex: "영화가 너무 슬퍼요.", cat: "情緒" },
+            { ko: "회사", zh: "公司", ex: "회사가 서울에 있어요.", cat: "工作" },
+            { ko: "머리", zh: "頭/頭髮", ex: "머리가 아파요.", cat: "身體" },
+            { ko: "지하철", zh: "地鐵", ex: "지하철을 타고 가요.", cat: "交通" },
+            { ko: "비빔밥", zh: "拌飯", ex: "비빔밥이 맛있어요.", cat: "食物" },
+            { ko: "여행", zh: "旅行", ex: "제주도 여행을 가요.", cat: "生活" }
         ];
 
-        // 自動填滿至 1000 個，避免手動貼上過長
-        for(let i=5; i<=1000; i++) {
-            words.push({ ko: "단어"+i, zh: "單字"+i, ex: "예문"+i, cat: i%2==0?"日常":"工作" });
-        }
-
-        let favs = JSON.parse(localStorage.getItem('favs')) || [];
-        let list = [...words];
-        let idx = 0;
-        let quiz = false;
-
-        function render() {
-            if (list.length === 0) {
-                document.getElementById('f').innerHTML = "空空如也";
-                return;
-            }
-            const item = list[idx];
-            const isFav = favs.some(f => f.ko === item.ko);
-            document.getElementById('star').innerText = isFav ? "★" : "☆";
-            document.getElementById('star').style.color = isFav ? "#f43f5e" : "white";
-
-            if (!quiz) {
-                document.getElementById('f').innerHTML = `<div class="ko">${item.ko}</div><button onclick="speak(event)" style="font-size:2rem;background:none;border:none;">🔊</button>`;
-                document.getElementById('b').innerHTML = `<div class="zh">${item.zh}</div><div class="ex">${item.ex}</div>`;
-            } else {
-                document.getElementById('f').innerHTML = `<div class="zh">${item.zh}</div><input type="text" id="in" placeholder="輸入韓文..." onclick="event.stopPropagation()" style="width:80%;padding:10px;margin-top:10px;border-radius:5px;"><button onclick="check(event)">檢查</button><div id="feed"></div>`;
-                document.getElementById('b').innerHTML = `<div class="ko">${item.ko}</div><div class="ex">${item.ex}</div>`;
-            }
-            document.getElementById('info').innerText = `${idx + 1} / ${list.length}`;
-            document.getElementById('progressBar').style.width = ((idx + 1) / list.length * 100) + "%";
-            document.getElementById('card').classList.remove('flipped');
-        }
-
-        function speak(e) { e.stopPropagation(); const m = new SpeechSynthesisUtterance(list[idx].ko); m.lang='ko-KR'; window.speechSynthesis.speak(m); }
-        function prev(e) { e.stopPropagation(); if(idx>0) { idx--; render(); } }
-        function next(e) { e.stopPropagation(); if(idx<list.length-1) { idx++; render(); } }
-        function toggleQuiz() { quiz = !quiz; render(); }
-        function check(e) { e.stopPropagation(); const v = document.getElementById('in').value; document.getElementById('feed').innerText = v===list[idx].ko?"正確！":"錯誤！"; }
-        function toggleFav(e) {
-            e.stopPropagation();
-            const item = list[idx];
-            const fIdx = favs.findIndex(f => f.ko === item.ko);
-            if(fIdx > -1) favs.splice(fIdx, 1); else favs.push(item);
-            localStorage.setItem('favs', JSON.stringify(favs));
-            render();
-        }
-        function changeCat() {
-            const c = document.getElementById('cat').value;
-            if(c==="全部") list = [...words];
-            else if(c==="收藏") list = [...favs];
-            else list = words.filter(w => w.cat === c);
-            idx = 0; render();
-        }
-
-        render();
-    </script>
-</body>
-</html>
+        // 2. 自動填滿其餘單字至
