@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOPIK 1000 單字衝刺站</title>
+    <title>TOPIK 韓文單字衝刺站</title>
     <style>
         :root {
             --bg-color: #0f172a;
             --card-bg: #1e293b;
-            --accent-ko: #fbbf24; /* 韓文用黃色 - 高對比 */
-            --accent-zh: #38bdf8; /* 中文用天藍色 */
+            --accent-ko: #fbbf24;
+            --accent-zh: #38bdf8;
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
         }
 
         body {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Pretendard', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
@@ -23,26 +23,25 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* 標題與導覽 */
-        header { width: 100%; padding: 20px; text-align: center; background: #1e293b; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        .controls { margin: 20px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        header { width: 100%; padding: 15px; text-align: center; background: #1e293b; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        
+        .controls { margin: 15px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: 90%; }
         select, button {
-            padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer;
-            font-size: 1rem; font-weight: bold;
+            padding: 10px 15px; border-radius: 8px; border: none; cursor: pointer;
+            font-size: 0.9rem; font-weight: bold;
         }
-        button { background: var(--accent-zh); color: #000; transition: 0.2s; }
-        button:hover { opacity: 0.8; transform: translateY(-2px); }
+        button { background: var(--accent-zh); color: #000; }
         .mode-toggle { background: var(--accent-ko); }
 
-        /* 單字卡容器 */
         .card-container {
             perspective: 1000px;
-            width: 350px;
-            height: 450px;
-            margin-top: 20px;
-            cursor: pointer;
+            width: 90%;
+            max-width: 350px;
+            height: 420px;
+            margin-top: 10px;
         }
 
         .card {
@@ -65,83 +64,119 @@
             justify-content: center;
             align-items: center;
             border-radius: 20px;
-            padding: 30px;
+            padding: 25px;
             box-sizing: border-box;
             border: 4px solid var(--accent-ko);
             background: var(--card-bg);
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.4);
         }
 
         .card-back { transform: rotateY(180deg); border-color: var(--accent-zh); }
 
-        /* 文字樣式 */
-        .ko-word { font-size: 3.5rem; color: var(--accent-ko); margin-bottom: 10px; }
-        .zh-word { font-size: 2.5rem; color: var(--accent-zh); margin-bottom: 20px; }
-        .example { font-size: 1.1rem; line-height: 1.6; color: var(--text-main); text-align: left; width: 100%; }
-        .pronounce-btn { font-size: 2rem; background: none; border: none; cursor: pointer; margin-top: 10px; }
+        .ko-word { font-size: 3rem; color: var(--accent-ko); margin-bottom: 5px; text-align: center; }
+        .zh-word { font-size: 2.2rem; color: var(--accent-zh); margin-bottom: 15px; text-align: center; }
+        .example { font-size: 1rem; line-height: 1.5; color: var(--text-main); text-align: left; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; width: 100%; }
+        
+        .pronounce-btn { font-size: 2rem; background: none; border: none; cursor: pointer; margin: 10px; padding: 5px; }
 
-        /* 測驗模式專屬樣式 */
         .quiz-input {
-            width: 80%; padding: 10px; font-size: 1.2rem; border-radius: 5px; border: 2px solid var(--accent-ko);
-            background: #0f172a; color: white; text-align: center; margin: 15px 0;
+            width: 100%; padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 2px solid var(--accent-ko);
+            background: #0f172a; color: white; text-align: center; margin: 10px 0;
         }
-        .feedback { font-weight: bold; margin-top: 10px; }
 
-        .pagination { margin-top: 30px; display: flex; align-items: center; gap: 20px; font-size: 1.2rem; }
+        .pagination { margin: 25px 0; display: flex; align-items: center; gap: 15px; }
+        .nav-btn { background: #334155; color: white; min-width: 80px; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>TOPIK 韓文單字互動學習</h1>
-    </header>
+    <header><h1>TOPIK 韓文單字卡</h1></header>
 
     <div class="controls">
         <select id="categorySelect" onchange="changeCategory()">
             <option value="全部">全部主題</option>
-            <option value="日常">日常用語</option>
-            <option value="情緒">情緒表達</option>
-            <option value="工作">職場工作</option>
+            <option value="日常">日常生活</option>
+            <option value="情緒">情緒心理</option>
+            <option value="工作">職場社會</option>
+            <option value="生活">休閒旅遊</option>
         </select>
-        <button class="mode-toggle" onclick="toggleMode()">切換至：測驗模式</button>
+        <button class="mode-toggle" onclick="toggleMode()">切換模式</button>
     </div>
 
     <div class="card-container" onclick="flipCard()">
         <div class="card" id="card">
-            <div class="card-face card-front" id="frontContent">
-                <div class="ko-word">학교</div>
-                <button class="pronounce-btn" onclick="speak(event)">🔊</button>
-                <div id="quizArea" style="display:none;">
-                    <input type="text" id="userInput" class="quiz-input" placeholder="請輸入韓文..." autocomplete="off">
-                    <button onclick="checkAnswer(event)">檢查答案</button>
-                    <div id="feedback" class="feedback"></div>
-                </div>
-            </div>
-            <div class="card-face card-back" id="backContent">
-                <div class="zh-word">學校</div>
-                <div class="example">
-                    <strong>例句：</strong><br>
-                    저는 학교에 갑니다.<br>
-                    (我往學校去。)
-                </div>
-            </div>
+            <div class="card-face card-front" id="frontContent"></div>
+            <div class="card-face card-back" id="backContent"></div>
         </div>
     </div>
 
     <div class="pagination">
-        <button onclick="prevCard(event)">上一張</button>
-        <span id="pageInfo">1 / 1000</span>
-        <button onclick="nextCard(event)">下一張</button>
+        <button class="nav-btn" onclick="prevCard(event)">上一張</button>
+        <span id="pageInfo">1 / 0</span>
+        <button class="nav-btn" onclick="nextCard(event)">下一張</button>
     </div>
 
     <script>
-        // 資料結構範例 (實際應用時可擴充至 1000 個)
         const wordData = [
-            { ko: "학교", zh: "學校", ex: "저는 학교에 갑니다.", cat: "日常" },
+            // 日常
+            { ko: "가방", zh: "包包", ex: "가방이 무거워요.", cat: "日常" },
+            { ko: "학교", zh: "學校", ex: "학교에 갑니다.", cat: "日常" },
             { ko: "사과", zh: "蘋果", ex: "사과가 맛있어요.", cat: "日常" },
+            { ko: "우유", zh: "牛奶", ex: "우유를 마셔요.", cat: "日常" },
+            { ko: "친구", zh: "朋友", ex: "친구를 만나요.", cat: "日常" },
+            { ko: "의자", zh: "椅子", ex: "의자에 앉아요.", cat: "日常" },
+            { ko: "책상", zh: "書桌", ex: "책상 위에 책이 있어요.", cat: "日常" },
+            { ko: "연필", zh: "鉛筆", ex: "연필로 써요.", cat: "日常" },
+            { ko: "신문", zh: "報紙", ex: "신문을 읽어요.", cat: "日常" },
+            { ko: "전화", zh: "電話", ex: "전화가 왔어요.", cat: "日常" },
+            { ko: "식사", zh: "用餐", ex: "식사를 하셨어요?", cat: "日常" },
+            { ko: "가족", zh: "家人", ex: "우리 가족은 네 명이에요.", cat: "日常" },
+            { ko: "공부", zh: "學習", ex: "한국어를 공부해요.", cat: "日常" },
+            { ko: "집", zh: "家", ex: "집에 가고 싶어요.", cat: "日常" },
+            { ko: "옷", zh: "衣服", ex: "옷을 입어요.", cat: "日常" },
+            { ko: "물", zh: "水", ex: "물을 좀 주세요.", cat: "日常" },
+            { ko: "빵", zh: "麵包", ex: "빵을 좋아해요.", cat: "日常" },
+            { ko: "구두", zh: "皮鞋", ex: "구두가 예뻐요.", cat: "日常" },
+            { ko: "안경", zh: "眼鏡", ex: "안경을 써요.", cat: "日常" },
+            { ko: "우산", zh: "雨傘", ex: "우산을 가져가요.", cat: "日常" },
+            
+            // 情緒
             { ko: "슬프다", zh: "悲傷", ex: "영화가 너무 슬퍼요.", cat: "情緒" },
-            { ko: "회의", zh: "會議", ex: "오전에 회의가 있습니다.", cat: "工作" },
-            { ko: "행복하다", zh: "幸福/快樂", ex: "지금 정말 행복해요.", cat: "情緒" }
+            { ko: "기쁘다", zh: "高興", ex: "만나서 정말 기뻐요.", cat: "情緒" },
+            { ko: "행복하다", zh: "幸福", ex: "지금 너무 행복해요.", cat: "情緒" },
+            { ko: "화나다", zh: "生氣", ex: "동생 때문에 화났어요.", cat: "情緒" },
+            { ko: "심심하다", zh: "無聊", ex: "혼자 있어서 심심해요.", cat: "情緒" },
+            { ko: "놀라다", zh: "驚訝", ex: "소리에 깜짝 놀랐어요.", cat: "情緒" },
+            { ko: "무섭다", zh: "害怕", ex: "밤길이 무서워요.", cat: "情緒" },
+            { ko: "피곤하다", zh: "疲累", ex: "일이 많아서 피곤해요.", cat: "情緒" },
+            { ko: "걱정하다", zh: "擔心", ex: "너무 걱정하지 마세요.", cat: "情緒" },
+            { ko: "부럽다", zh: "羨慕", ex: "친구가 부러워요.", cat: "情緒" },
+            
+            // 工作
+            { ko: "회사", zh: "公司", ex: "회사에 출근해요.", cat: "工作" },
+            { ko: "회의", zh: "會議", ex: "회의 중입니다.", cat: "工作" },
+            { ko: "직업", zh: "職業", ex: "직업이 무엇입니까?", cat: "工作" },
+            { ko: "서류", zh: "文件", ex: "서류를 준비하세요.", cat: "工作" },
+            { ko: "사장님", zh: "老闆", ex: "사장님이 오셨어요.", cat: "工作" },
+            { ko: "월급", zh: "薪水", ex: "월급이 들어왔어요.", cat: "工作" },
+            { ko: "출장", zh: "出差", ex: "내일 출장을 가요.", cat: "工作" },
+            { ko: "면접", zh: "面試", ex: "면접을 잘 봤어요.", cat: "工作" },
+            { ko: "계획", zh: "計劃", ex: "계획을 세워요.", cat: "工作" },
+            { ko: "결정", zh: "決定", ex: "결정하기 어려워요.", cat: "工作" },
+
+            // 生活/旅遊
+            { ko: "여행", zh: "旅行", ex: "제주도 여행을 가요.", cat: "生活" },
+            { ko: "지도", zh: "地圖", ex: "지도를 보세요.", cat: "生活" },
+            { ko: "사진", zh: "照片", ex: "사진을 찍어요.", cat: "生活" },
+            { ko: "여권", zh: "護照", ex: "여권이 어디에 있죠?", cat: "生活" },
+            { ko: "비행기", zh: "飛機", ex: "비행기를 타고 가요.", cat: "生活" },
+            { ko: "바다", zh: "大海", ex: "바다가 푸르러요.", cat: "生活" },
+            { ko: "산", zh: "山", ex: "산에 올라가요.", cat: "生活" },
+            { ko: "날씨", zh: "天氣", ex: "날씨가 덥네요.", cat: "生活" },
+            { ko: "계절", zh: "季節", ex: "어느 계절을 좋아해요?", cat: "生活" },
+            { ko: "음식", zh: "食物", ex: "한국 음식을 좋아해요.", cat: "生活" }
+            
+            // 此處僅列出 50 個代表，您可以繼續按此格式新增至 300 或 1000 個
         ];
 
         let filteredWords = [...wordData];
@@ -152,101 +187,61 @@
             const card = filteredWords[currentIndex];
             const front = document.getElementById('frontContent');
             const back = document.getElementById('backContent');
-            const feedback = document.getElementById('feedback');
-            const userInput = document.getElementById('userInput');
-            
-            feedback.innerText = "";
-            userInput.value = "";
 
             if (!isQuizMode) {
-                front.innerHTML = `
-                    <div class="ko-word">${card.ko}</div>
-                    <button class="pronounce-btn" onclick="speak(event)">🔊</button>
-                    <small style="color:var(--text-sub)">點擊翻看中文</small>
-                `;
-                back.innerHTML = `
-                    <div class="zh-word">${card.zh}</div>
-                    <div class="example"><strong>例句：</strong><br>${card.ex}</div>
-                `;
+                front.innerHTML = `<div class="ko-word">${card.ko}</div><button class="pronounce-btn" onclick="speak(event)">🔊</button><small style="color:var(--text-sub)">點擊翻看</small>`;
+                back.innerHTML = `<div class="zh-word">${card.zh}</div><div class="example"><strong>例句：</strong><br>${card.ex}</div>`;
             } else {
-                front.innerHTML = `
-                    <div class="zh-word">${card.zh}</div>
-                    <input type="text" id="userInput" class="quiz-input" placeholder="請輸入韓文..." onclick="event.stopPropagation()">
-                    <button onclick="checkAnswer(event)">檢查答案</button>
-                    <div id="feedback" class="feedback"></div>
-                `;
-                back.innerHTML = `
-                    <div class="ko-word">${card.ko}</div>
-                    <button class="pronounce-btn" onclick="speak(event)">🔊</button>
-                    <div class="example"><strong>例句：</strong><br>${card.ex}</div>
-                `;
+                front.innerHTML = `<div class="zh-word">${card.zh}</div><input type="text" id="userInput" class="quiz-input" placeholder="輸入韓文..." onclick="event.stopPropagation()"><button onclick="checkAnswer(event)">檢查</button><div id="feedback"></div>`;
+                back.innerHTML = `<div class="ko-word">${card.ko}</div><button class="pronounce-btn" onclick="speak(event)">🔊</button><div class="example"><strong>正確例句：</strong><br>${card.ex}</div>`;
             }
             
             document.getElementById('pageInfo').innerText = `${currentIndex + 1} / ${filteredWords.length}`;
             document.getElementById('card').classList.remove('is-flipped');
         }
 
-        function flipCard() {
-            document.getElementById('card').classList.toggle('is-flipped');
-        }
+        function flipCard() { document.getElementById('card').classList.toggle('is-flipped'); }
 
         function speak(event) {
             event.stopPropagation();
-            const text = filteredWords[currentIndex].ko;
-            const msg = new SpeechSynthesisUtterance(text);
+            const msg = new SpeechSynthesisUtterance(filteredWords[currentIndex].ko);
             msg.lang = 'ko-KR';
             window.speechSynthesis.speak(msg);
         }
 
         function toggleMode() {
             isQuizMode = !isQuizMode;
-            document.querySelector('.mode-toggle').innerText = isQuizMode ? "切換至：學習模式" : "切換至：測驗模式";
             updateCard();
         }
 
         function checkAnswer(event) {
             event.stopPropagation();
             const input = document.getElementById('userInput').value.trim();
-            const correct = filteredWords[currentIndex].ko;
             const feedback = document.getElementById('feedback');
-            
-            if (input === correct) {
-                feedback.innerText = "正解！🎉";
-                feedback.style.color = "#4ade80";
+            if (input === filteredWords[currentIndex].ko) {
+                feedback.innerHTML = "正解！🎉"; feedback.style.color = "#4ade80";
             } else {
-                feedback.innerText = "再試一次！💪";
-                feedback.style.color = "#f87171";
+                feedback.innerHTML = "再試一次！💪"; feedback.style.color = "#f87171";
             }
         }
 
         function nextCard(event) {
             event.stopPropagation();
-            if (currentIndex < filteredWords.length - 1) {
-                currentIndex++;
-                updateCard();
-            }
+            if (currentIndex < filteredWords.length - 1) { currentIndex++; updateCard(); }
         }
 
         function prevCard(event) {
             event.stopPropagation();
-            if (currentIndex > 0) {
-                currentIndex--;
-                updateCard();
-            }
+            if (currentIndex > 0) { currentIndex--; updateCard(); }
         }
 
         function changeCategory() {
             const cat = document.getElementById('categorySelect').value;
-            if (cat === "全部") {
-                filteredWords = [...wordData];
-            } else {
-                filteredWords = wordData.filter(w => w.cat === cat);
-            }
+            filteredWords = cat === "全部" ? [...wordData] : wordData.filter(w => w.cat === cat);
             currentIndex = 0;
             updateCard();
         }
 
-        // 初始化
         updateCard();
     </script>
 </body>
