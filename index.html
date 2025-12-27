@@ -8,13 +8,13 @@
         :root { --bg: #0f172a; --card: #1e293b; --accent: #fbbf24; --blue: #38bdf8; --text: #f8fafc; --red: #f43f5e; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .progress-bar { width: 100%; height: 6px; background: #334155; position: fixed; top: 0; z-index: 1000; }
-        #progressFill { height: 100%; width: 0%; background: var(--blue); transition: 0.3s; }
+        #pFill { height: 100%; width: 0%; background: var(--blue); transition: 0.3s; }
         header { width: 100%; padding: 20px 0; text-align: center; background: #1e293b; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .controls { margin: 15px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: 95%; }
         select, button { padding: 12px; border-radius: 12px; border: none; font-weight: bold; font-size: 0.9rem; cursor: pointer; }
         button { background: var(--blue); color: #000; }
         .card-container { width: 90%; max-width: 350px; height: 420px; margin-top: 10px; position: relative; perspective: 1000px; }
-        .star-btn { position: absolute; top: 20px; right: 20px; font-size: 2rem; background: none; border: none; z-index: 10; cursor: pointer; color: white; transition: 0.2s; }
+        .star-btn { position: absolute; top: 20px; right: 20px; font-size: 2rem; background: none; border: none; z-index: 10; cursor: pointer; color: white; }
         .card { width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
         .card.flipped { transform: rotateY(180deg); }
         .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; box-sizing: border-box; border: 5px solid var(--accent); background: var(--card); box-shadow: 0 20px 25px rgba(0,0,0,0.4); }
@@ -24,46 +24,37 @@
         .ex { font-size: 1rem; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 15px; width: 100%; line-height: 1.5; }
         .nav { margin: 25px 0; display: flex; align-items: center; gap: 20px; }
         .nav-btn { background: #334155; color: white; padding: 12px 25px; border-radius: 10px; }
-        input[type="text"] { width: 85%; padding: 12px; margin: 15px 0; border-radius: 10px; border: 2px solid var(--accent); background: #0f172a; color: white; text-align: center; }
+        input { width: 85%; padding: 12px; margin: 15px 0; border-radius: 10px; border: 2px solid var(--accent); background: #0f172a; color: white; text-align: center; }
     </style>
 </head>
 <body>
-    <div class="progress-bar"><div id="progressFill"></div></div>
+    <div class="progress-bar"><div id="pFill"></div></div>
     <header><h2>TOPIK 核心單字衝刺</h2></header>
-    
     <div class="controls">
-        <select id="categoryFilter" onchange="filterCategory()">
+        <select id="cat" onchange="filter()">
             <option value="全部">全部單字</option>
             <option value="收藏">★ 我的收藏</option>
-            <option value="日常">日常生活</option>
-            <option value="情緒">情緒心理</option>
-            <option value="工作">職場社會</option>
-            <option value="生活">休閒旅遊</option>
-            <option value="身體">身體器官</option>
-            <option value="交通">交通通訊</option>
-            <option value="食物">飲食文化</option>
+            <option value="日常">日常</option><option value="情緒">情緒</option>
+            <option value="工作">工作</option><option value="生活">生活</option>
+            <option value="身體">身體</option><option value="交通">交通</option>
+            <option value="食物">食物</option>
         </select>
-        <button onclick="toggleQuizMode()" id="modeBtn">測驗模式</button>
+        <button onclick="quizMode()" id="mBtn">測驗模式</button>
     </div>
-
     <div class="card-container">
-        <button class="star-btn" onclick="toggleFavorite(event)" id="starIcon">☆</button>
-        <div class="card" id="wordCard" onclick="this.classList.toggle('flipped')">
-            <div class="face front" id="cardFront"></div>
-            <div class="face back" id="cardBack"></div>
+        <button class="star-btn" onclick="fav(event)" id="sIcon">☆</button>
+        <div class="card" id="wd" onclick="this.classList.toggle('flipped')">
+            <div class="face front" id="f"></div>
+            <div class="face back" id="b"></div>
         </div>
     </div>
-
     <div class="nav">
-        <button class="nav-btn" onclick="changeWord(-1, event)">上一張</button>
-        <span id="pageCounter">0 / 0</span>
-        <button class="nav-btn" onclick="changeWord(1, event)">下一張</button>
+        <button class="nav-btn" onclick="step(-1, event)">上一張</button>
+        <span id="pCount">0 / 0</span>
+        <button class="nav-btn" onclick="step(1, event)">下一張</button>
     </div>
-
     <script>
-        // === 單字資料庫 (稍後將在此填入 200 字) ===
-        const RAW_DATA = [        // === 單字資料庫 (這是一整塊完整的內容，請直接替換舊的) ===
-        const RAW_DATA = [
+        const DATA = [
             {k:"공부하다", z:"學習", e:"한국어를 공부해요.", c:"工作"},
             {k:"일하다", z:"工作", e:"오늘도 일해요.", c:"工作"},
             {k:"가다", z:"去", e:"집에 가요.", c:"日常"},
@@ -163,33 +154,127 @@
             {k:"시끄럽다", z:"吵", e:"밖이 시끄러워요.", c:"日常"},
             {k:"친절하다", z:"親切", e:"그는 참 친절해요.", c:"情緒"},
             {k:"똑똑하다", z:"聰明", e:"제 동생은 똑똑해요.", c:"日常"},
-            {k:"피곤하다", z:"疲倦", e:"일이 많아 피곤해요.", c:"工作"}
+            {k:"학생", z:"學生", e:"저는 학생입니다.", c:"日常"},
+            {k:"선생님", z:"老師", e:"선생님이 오십니다.", c:"工作"},
+            {k:"회사원", z:"職員", e:"제 친구는 회사원입니다.", c:"工作"},
+            {k:"의사", z:"醫生", e:"병원에 의사가 있어요.", c:"身體"},
+            {k:"가족", z:"家族", e:"우리 가족은 넷입니다.", c:"日常"},
+            {k:"부모님", z:"父母", e:"부모님께 편지 써요.", c:"日常"},
+            {k:"아버지", z:"父親", e:"아버지는 요리를 잘해요.", c:"日常"},
+            {k:"어머니", z:"母親", e:"어머니가 보고 싶어요.", c:"日常"},
+            {k:"형", z:"哥哥(男稱)", e:"우리 형은 키가 커요.", c:"日常"},
+            {k:"누나", z:"姐姐(男稱)", e:"누나는 대학생입니다.", c:"日常"},
+            {k:"오빠", z:"哥哥(女稱)", e:"오빠가 밥을 사줬어요.", c:"日常"},
+            {k:"언니", z:"姐姐(女稱)", e:"언니랑 같이 가요.", c:"日常"},
+            {k:"동생", z:"弟妹", e:"제 동생은 귀여워요.", c:"日常"},
+            {k:"이름", z:"名字", e:"이름이 무엇입니까?", c:"日常"},
+            {k:"나이", z:"年紀", e:"나이가 어떻게 되세요?", c:"日常"},
+            {k:"생일", z:"生日", e:"오늘이 제 생일입니다.", c:"日常"},
+            {k:"나라", z:"國家", e:"어느 나라 사람입니까?", c:"日常"},
+            {k:"한국", z:"韓國", e:"한국에 가고 싶어요.", c:"日常"},
+            {k:"대만", z:"台灣", e:"대만은 날씨가 좋아요.", c:"日常"},
+            {k:"사람", z:"人", e:"사람이 정말 많아요.", c:"日常"},
+            {k:"친구", z:"朋友", e:"친구를 만나러 가요.", c:"日常"},
+            {k:"날씨", z:"天氣", e:"오늘 날씨가 어때요?", c:"生活"},
+            {k:"봄", z:"春天", e:"봄은 따뜻합니다.", c:"生活"},
+            {k:"여름", z:"夏天", e:"여름은 너무 더워요.", c:"生活"},
+            {k:"가을", z:"秋天", e:"가을은 시원합니다.", c:"生活"},
+            {k:"겨울", z:"冬天", e:"겨울은 눈이 와요.", c:"生活"},
+            {k:"시간", z:"時間", e:"지금 시간이 있어요?", c:"日常"},
+            {k:"아침", z:"早上/早餐", e:"아침을 먹었습니까?", c:"日常"},
+            {k:"점심", z:"中午/午餐", e:"점심은 비빔밥이에요.", c:"日常"},
+            {k:"저녁", z:"晚上/晚餐", e:"저녁에 만납시다.", c:"日常"},{k:"오늘", z:"今天", e:"오늘 무엇을 해요?", c:"日常"},
+            {k:"어제", z:"昨天", e:"어제 집에서 쉬었어요.", c:"日常"},
+            {k:"내일", z:"明天", e:"내일 학교에 가요?", c:"日常"},
+            {k:"주말", z:"週末", e:"주말에 여행을 가요.", c:"生活"},
+            {k:"집", z:"家", e:"집이 어디입니까?", c:"日常"},
+            {k:"방", z:"房間", e:"제 방은 깨끗해요.", c:"日常"},
+            {k:"부엌", z:"廚房", e:"부엌에서 요리해요.", c:"食物"},
+            {k:"화장실", z:"廁所", e:"화장실이 어디예요?", c:"日常"},
+            {k:"학교", z:"學校", e:"학교에서 공부해요.", c:"日常"},
+            {k:"교실", z:"教室", e:"교실에 학생이 있어요.", c:"工作"},
+            {k:"회사", z:"公司", e:"회사가 서울에 있어요.", c:"工作"},
+            {k:"사무실", z:"辦公室", e:"사무실에서 일해요.", c:"工作"},
+            {k:"병원", z:"醫院", e:"병원에 가야 해요.", c:"身體"},
+            {k:"약국", z:"藥局", e:"약국에서 약을 사요.", c:"身體"},
+            {k:"은행", z:"銀行", e:"은행에 돈을 찾아요.", c:"日常"},
+            {k:"우체국", z:"郵局", e:"우체국에 편지 부쳐요.", c:"日常"},
+            {k:"시장", z:"市場", e:"시장에서 과일을 사요.", c:"食物"},
+            {k:"마트", z:"超市", e:"마트가 문을 닫았어요.", c:"日常"},
+            {k:"서점", z:"書店", e:"서점에서 책을 봐요.", c:"生活"},
+            {k:"백화점", z:"百貨公司", e:"백화점이 비싸요.", c:"日常"},
+            {k:"공원", z:"公園", e:"공원에서 운동해요.", c:"生活"},
+            {k:"식당", z:"餐廳", e:"식당에서 밥을 먹어요.", c:"食物"},
+            {k:"카페", z:"咖啡廳", e:"카페에서 친구 만나요.", c:"食物"},
+            {k:"지하철역", z:"地鐵站", e:"지하철역에서 만나요.", c:"交通"},
+            {k:"버스정류장", z:"公車站", e:"정류장에 버스 없어요.", c:"交通"},
+            {k:"공항", z:"機場", e:"공항에 사람이 많아요.", c:"交通"},
+            {k:"바다", z:"大海", e:"바다가 보고 싶어요.", c:"生活"},
+            {k:"산", z:"山", e:"주말에 산에 가요.", c:"生活"},
+            {k:"물", z:"水", e:"시원한 물을 마셔요.", c:"食物"},
+            {k:"우유", z:"牛奶", e:"매일 우유를 마셔요.", c:"食物"},
+            {k:"주스", z:"果汁", e:"오렌지 주스 주세요.", c:"食物"},
+            {k:"밥", z:"飯", e:"밥을 맛있게 먹어요.", c:"食物"},
+            {k:"빵", z:"麵包", e:"빵이 아주 달아요.", c:"食物"},
+            {k:"고기", z:"肉", e:"저는 고기를 좋아해요.", c:"食物"},
+            {k:"김치", z:"泡菜", e:"김치가 조금 매워요.", c:"食物"},
+            {k:"사과", z:"蘋果", e:"사과가 빨갛습니다.", c:"食物"},
+            {k:"포도", z:"葡萄", e:"포도가 참 달아요.", c:"食物"},
+            {k:"수박", z:"西瓜", e:"여름에는 수박이죠.", c:"食物"},
+            {k:"옷", z:"衣服", e:"예쁜 옷을 샀어요.", c:"日常"},
+            {k:"바지", z:"褲子", e:"바지가 너무 길어요.", c:"日常"},
+            {k:"치마", z:"裙子", e:"치마가 잘 어울려요.", c:"日常"},
+            {k:"모자", z:"帽子", e:"모자를 쓰고 가요.", c:"日常"},
+            {k:"안경", z:"眼鏡", e:"안경을 썼습니다.", c:"日常"},
+            {k:"신발", z:"鞋子", e:"신발이 발에 작아요.", c:"日常"},
+            {k:"가방", z:"包包", e:"가방이 무겁습니다.", c:"日常"},
+            {k:"책", z:"書", e:"책이 재미있어요.", c:"生活"},
+            {k:"연필", z:"鉛筆", e:"연필로 이름을 써요.", c:"日常"},
+            {k:"볼펜", z:"原子筆", e:"볼펜을 빌려주세요.", c:"日常"},
+            {k:"공책", z:"筆記本", e:"공책에 적으세요.", c:"工作"},
+            {k:"지우개", z:"橡皮擦", e:"지우개로 지워요.", c:"日常"},
+            {k:"시계", z:"手錶/鐘", e:"벽에 시계가 있어요.", c:"日常"},
+            {k:"휴대폰", z:"手機", e:"휴대폰이 고장 났어요.", c:"交通"},
+            {k:"컴퓨터", z:"電腦", e:"컴퓨터가 빠릅니다.", c:"工作"},
+            {k:"텔레비전", z:"電視", e:"티비를 보며 웃어요.", c:"生活"},
+            {k:"라디오", z:"收音機", e:"라디오를 들어요.", c:"生活"},
+            {k:"버스", z:"公車", e:"버스를 타고 학교 가요.", c:"交通"},
+            {k:"택시", z:"計程車", e:"택시비가 올랐어요.", c:"交通"},
+            {k:"지하철", z:"地鐵", e:"지하철이 편리해요.", c:"交通"},
+            {k:"기차", z:"火車", e:"기차표를 예매해요.", c:"交通"},
+            {k:"비행기", z:"飛機", e:"비행기를 타고 가요.", c:"交通"},
+            {k:"자전거", z:"自行車", e:"자전거를 탑니다.", c:"交通"}
         ];
 
-        ];
+        let favs = JSON.parse(localStorage.getItem('tp_f')) || [];
+        let list = [...DATA];
+        let idx = 0, quiz = false;
 
-        let favorites = JSON.parse(localStorage.getItem('topik_favs')) || [];
-        let displayList = [...RAW_DATA];
-        let currentIndex = 0;
-        let isQuizMode = false;
-        const synth = window.speechSynthesis;
-
-        function updateDisplay() {
-            if (displayList.length === 0) {
-                document.getElementById('cardFront').innerHTML = "目前分類無單字";
-                document.getElementById('cardBack').innerHTML = "請切換分類";
-                document.getElementById('pageCounter').innerText = "0 / 0";
-                return;
-            }
-            const item = displayList[currentIndex];
-            const isFav = favorites.some(f => f.k === item.k);
-            const star = document.getElementById('starIcon');
-            star.innerText = isFav ? "★" : "☆";
-            star.style.color = isFav ? "var(--red)" : "white";
-
-            if (!isQuizMode) {
-                document.getElementById('cardFront').innerHTML = `<div class="ko">${item.k}</div><button onclick="playVoice(event)" style="font-size:2.5rem;background:none;border:none;cursor:pointer;">🔊</button><p style="color:#94a3b8;font-size:0.8rem;margin-top:15px;">點擊翻面</p>`;
-                document.getElementById('cardBack').innerHTML = `<div class="zh">${item.z}</div><div class="ex"><strong>例句：</strong><br>${item.e}</div>`;
+        function show() {
+            if (!list.length) { document.getElementById('f').innerHTML = "目前無單字"; return; }
+            const item = list[idx];
+            const isF = favs.some(f => f.k === item.k);
+            document.getElementById('sIcon').innerText = isF ? "★" : "☆";
+            document.getElementById('sIcon').style.color = isF ? "var(--red)" : "white";
+            if (!quiz) {
+                document.getElementById('f').innerHTML = `<div class="ko">${item.k}</div><button onclick="spk(event)" style="font-size:2.5rem;background:none;border:none;">🔊</button>`;
+                document.getElementById('b').innerHTML = `<div class="zh">${item.z}</div><div class="ex"><strong>例句：</strong><br>${item.e}</div>`;
             } else {
-                document.getElementById('cardFront').innerHTML = `<div class="zh">${item.z}</div><input type="text" id="quizInput" placeholder="輸入韓文..." onclick="event.stopPropagation()"><button onclick="checkAnswer(event)">檢查</button><div id="feedback" style="margin-top:10px;font-weight:bold;"></div>`;
-                document.getElementById('cardBack').innerHTML = `<div class="ko">${item.k}</div><button onclick="playVoice(event)" style="font
+                document.getElementById('f').innerHTML = `<div class="zh">${item.z}</div><input type="text" id="qIn" placeholder="輸入韓文..." onclick="event.stopPropagation()"><button onclick="chk(event)">檢查</button><div id="feed"></div>`;
+                document.getElementById('b').innerHTML = `<div class="ko">${item.k}</div><button onclick="spk(event)" style="font-size:2rem;background:none;border:none;">🔊</button><div class="ex">${item.e}</div>`;
+            }
+            document.getElementById('pCount').innerText = `${idx + 1} / ${list.length}`;
+            document.getElementById('pFill').style.width = ((idx + 1) / list.length * 100) + "%";
+            document.getElementById('wd').classList.remove('flipped');
+        }
+
+        function spk(e) { e.stopPropagation(); window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(list[idx].k); u.lang = 'ko-KR'; u.rate = 0.8; window.speechSynthesis.speak(u); }
+        function step(s, e) { e.stopPropagation(); idx = (idx + s + list.length) % list.length; show(); }
+        function quizMode() { quiz = !quiz; document.getElementById('mBtn').innerText = quiz ? "學習模式" : "測驗模式"; show(); }
+        function chk(e) { e.stopPropagation(); const val = document.getElementById('qIn').value.trim(); const f = document.getElementById('feed'); if(val === list[idx].k) { f.innerText = "正確！🎉"; f.style.color = "#4ade80"; } else { f.innerText = "再試一次！💪"; f.style.color = "#f87171"; } }
+        function fav(e) { e.stopPropagation(); const item = list[idx]; const fIdx = favs.findIndex(f => f.k === item.k); if(fIdx > -1) favs.splice(fIdx, 1); else favs.push(item); localStorage.setItem('tp_f', JSON.stringify(favs)); show(); }
+        function filter() { const c = document.getElementById('cat').value; if(c === "全部") list = [...DATA]; else if(c === "收藏") list = [...favs]; else list = DATA.filter(w => w.c === c); idx = 0; show(); }
+        show();
+    </script>
+</body>
+</html>
