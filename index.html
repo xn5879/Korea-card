@@ -31,14 +31,19 @@
     <header><h2>TOPIK 核心單字 (Chrome 修復版)</h2></header>
     <p style="font-size: 0.8rem; color: var(--accent); margin: 5px;">* Chrome 若無聲，請點擊背景任一處後再試</p>
     <div class="controls">
-        <select id="ct" onchange="fltr()"><option value="全部">全部</option><option value="收藏">★ 收藏</option><option value="日常">日常</option><option value="情緒">情緒</option><option value="工作">工作</option><option value="生活">生活</option><option value="身體">身體</option><option value="交通">交通</option><option value="食物">食物</option></select>
+        <select id="ct" onchange="fltr()"><option value="全部">全部</option><option value="收藏">★ 收藏</option><option value="日常">日常</option><option value="情緒">情緒</option><option value="工作">工作</option><option value="生活">生活</option><option value="身體">身體</option><option value="交通">交通</option><option value="食物">食物</option><option value="錯題">❌ 錯題複習</option></select>
+
         <button onclick="qzM()" id="mb">測驗模式</button>
     </div>
     <div class="container">
         <button class="star" onclick="fv(event)" id="si">☆</button>
         <div class="card" id="wd" onclick="this.classList.toggle('flip')">
             <div class="face front" id="f"></div>
-            <div class="face back" id="b"></div>
+            <div class="face back" id="b">
+    <div id="backText"></div>
+    <button onclick="saveMistake(event)" style="margin-top:20px; padding:10px; background:#ff4d4d; color:white; border:none; border-radius:5px; cursor:pointer;">我記錯了 ❌</button>
+</div>
+
         </div>
     </div>
     <div class="nav">
