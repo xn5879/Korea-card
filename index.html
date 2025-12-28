@@ -108,8 +108,39 @@
         function qzM() { qz = !qz; document.getElementById('mb').innerText = qz ? "學習模式" : "測驗模式"; show(); }
         function chk(e) { e.stopPropagation(); const v = document.getElementById('qi').value.trim(); const f = document.getElementById('fd'); if(v === L[id].k) { f.innerText = "正確！🎉"; f.style.color = "#4ade80"; } else { f.innerText = "錯誤！💪"; f.style.color = "#f87171"; } }
         function fv(e) { e.stopPropagation(); const i = L[id]; const fI = fvL.findIndex(f => f.k === i.k); if(fI > -1) fvL.splice(fI, 1); else fvL.push(i); localStorage.setItem('tp_f', JSON.stringify(fvL)); show(); }
-        function fltr() { const c = document.getElementById('ct').value; if(c === "全部") L = [...D]; else if(c === "收藏") L = [...fvL]; else L = D.filter(w => w.c === c); id = 0; show(); }
-        show();
+        // 1. 初始化錯題紀錄
+let mistakes = JSON.parse(localStorage.getItem('korean_mistakes')) || [];
+
+// 2. 儲存錯題的函式
+function saveMistake(event) {
+    event.stopPropagation(); // 阻止卡片翻轉
+    const currentWord = L[id]; // 使用你代碼中的變數 L 和 id
+    
+    if (!mistakes.some(m => m.k === currentWord.k)) {
+        mistakes.push(currentWord);
+        localStorage.setItem('korean_mistakes', JSON.stringify(mistakes));
+        alert('已加入錯題區！');
+    } else {
+        alert('此單字已在錯題區中。');
+    }
+}
+
+// 3. 更新篩選函式 (對應你截圖中的 fltr)
+function fltr() {
+    const val = document.getElementById('ct').value;
+    if (val === "全部") {
+        L = [...D];
+    } else if (val === "收藏") {
+        L = D.filter(d => fvL.includes(d.k));
+    } else if (val === "錯題") {
+        L = [...mistakes];
+    } else {
+        L = D.filter(d => d.c === val);
+    }
+    id = 0;
+    show();
+}
+
     </script>
 </body>
 </html>
