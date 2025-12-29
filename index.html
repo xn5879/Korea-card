@@ -3,52 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>韓語學習 Pro</title>
+    <title>韓語學習 Pro (修復版)</title>
     <style>
         :root { 
             --bg: #0f172a; --card: #1e293b; --text: #f8fafc; 
             --accent: #fbbf24; --again: #ff4d4d; --hard: #fb923c; 
             --good: #3b82f6; --easy: #22c55e; --bar-bg: #334155;
         }
-        body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
         
-        /* 頂部進度條 */
-        .header-stats { width: 100%; max-width: 400px; margin-bottom: 15px; background: rgba(30,41,59,0.5); padding: 10px; border-radius: 15px; }
+        /* 狀態列 */
+        .header-stats { width: 100%; max-width: 400px; margin-bottom: 15px; background: rgba(30,41,59,0.5); padding: 10px; border-radius: 15px; box-sizing: border-box; }
         .stats-info { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; font-weight: bold; }
         .progress-container { width: 100%; height: 10px; background: var(--bar-bg); border-radius: 10px; overflow: hidden; }
         .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #fbbf24, #f59e0b); transition: width 0.5s ease; }
         
-        /* 每週複習提醒 */
-        #weeklyAlert { width: 100%; max-width: 400px; background: var(--again); color: white; padding: 8px; border-radius: 10px; margin-bottom: 10px; font-size: 13px; text-align: center; display: none; cursor: pointer; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        /* 通知提示框 (取代 alert) */
+        #toast { position: fixed; top: 20px; background: #334155; color: white; padding: 12px 20px; border-radius: 10px; z-index: 1000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.5); border-left: 4px solid var(--accent); }
 
-        .controls { margin-bottom: 15px; display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
-        select, button { padding: 8px 10px; border-radius: 8px; border: none; font-size: 13px; cursor: pointer; background: #334155; color: white; }
+        #weeklyAlert { width: 100%; max-width: 400px; background: var(--again); color: white; padding: 10px; border-radius: 10px; margin-bottom: 10px; font-size: 13px; text-align: center; display: none; cursor: pointer; }
+
+        .controls { margin-bottom: 15px; display: flex; gap: 8px; width: 100%; max-width: 400px; }
+        select, button { padding: 10px; border-radius: 8px; border: none; font-size: 14px; cursor: pointer; background: #334155; color: white; flex: 1; }
         
-        /* 卡片設計 */
+        /* 卡片 */
         .container { perspective: 1000px; width: 100%; max-width: 340px; height: 380px; position: relative; }
         .card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.5s; }
         .card.flip { transform: rotateY(180deg); }
         .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 24px; border: 2px solid #334155; background: var(--card); padding: 20px; box-sizing: border-box; text-align: center; }
         .back { transform: rotateY(180deg); border-color: var(--accent); }
         
-        .ko { font-size: 40px; font-weight: bold; color: var(--accent); margin-bottom: 10px; }
-        .zh { font-size: 28px; font-weight: bold; margin-bottom: 10px; }
-        .ex { font-size: 14px; color: #94a3b8; line-height: 1.4; }
+        .ko { font-size: 42px; font-weight: bold; color: var(--accent); margin-bottom: 10px; }
+        .zh { font-size: 32px; font-weight: bold; margin-bottom: 10px; }
+        .ex { font-size: 15px; color: #94a3b8; line-height: 1.4; margin-top: 10px; }
 
         .difficulty-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; margin-top: 15px; }
         .diff-btn { padding: 12px; border-radius: 10px; color: white; font-weight: bold; border: none; font-size: 12px; }
 
-        .nav { margin-top: 15px; display: flex; align-items: center; gap: 20px; }
-        .nav-btn { background: #334155; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .nav { margin-top: 20px; display: flex; align-items: center; gap: 25px; }
+        .nav-btn { background: #334155; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: none; color: white; }
         
-        /* 備份按鈕區 */
-        .backup-zone { margin-top: 20px; font-size: 11px; opacity: 0.6; }
+        input#qi { width: 85%; padding: 12px; border-radius: 10px; border: 2px solid var(--bar-bg); background: #0f172a; color: white; text-align: center; font-size: 18px; margin: 15px 0; }
+        .backup-btns { margin-top: 30px; display: flex; gap: 10px; opacity: 0.5; }
+        .backup-btns button { padding: 5px 10px; font-size: 11px; }
     </style>
 </head>
 <body>
 
+    <div id="toast">提示訊息</div>
     <div id="weeklyAlert" onclick="startWeeklyReview()">📢 每週複習時間到！點此複習本週難點</div>
 
     <div class="header-stats">
@@ -64,16 +66,15 @@
     <div class="controls">
         <select id="ct" onchange="fltr()">
             <option value="全部">全部單字</option>
-            <option value="本週複習">📅 本週複習(難題)</option>
+            <option value="本週複習">📅 本週複習</option>
             <option value="再次">🟥 再次</option>
             <option value="困難">🟧 困難</option>
-            <option value="日常">日常</option><option value="生活">生活</option><option value="情緒">情緒</option>
         </select>
-        <button onclick="qzM()" id="mb" style="background: var(--accent); color: #000;">切換測驗</button>
+        <button onclick="qzM()" id="mb" style="background: var(--accent); color: #000; font-weight: bold;">切換測驗</button>
     </div>
 
     <div class="container">
-        <div class="card" id="wd" onclick="this.classList.toggle('flip')">
+        <div class="card" id="wd" onclick="handleCardClick()">
             <div class="face front" id="f"></div>
             <div class="face back" id="b"></div>
         </div>
@@ -81,20 +82,23 @@
 
     <div class="nav">
         <button class="nav-btn" onclick="st(-1, event)">←</button>
-        <span id="pc">1 / 1000</span>
+        <span id="pc" style="font-weight: bold; min-width: 80px; text-align: center;">1 / 1000</span>
         <button class="nav-btn" onclick="st(1, event)">→</button>
     </div>
 
-    <div class="backup-zone">
+    <div class="backup-btns">
         <button onclick="exportData()">導出備份</button>
         <button onclick="importData()">導入備份</button>
     </div>
 
 <script>
-// --- 單字資料區 (請貼上你原本的 1000 個單字) ---
-const D = [{k:"공부하다", z:"學習", e:"한국어를 공부해요.", c:"日常"},{k:"일하다", z:"工作", e:"회사에서 일해요.", c:"工作"}]; 
+// --- 🔴 重要：請在此處 [ ] 內貼上你原本的 1000 個單字資料 ---
+const D = [
+    {k:"공부하다", z:"學習", e:"한국어를 공부해요.", c:"日常"},
+    {k:"일하다", z:"工作", e:"회사에서 일해요.", c:"工作"}
+    // ... 之後請把其餘單字補在這裡 ...
+]; 
 
-// --- 邏輯處理區 ---
 let L = [...D], id = 0, qz = false;
 let stats = JSON.parse(localStorage.getItem('k_stats')) || { streak: 0, lastDate: '', todayCount: 0, learnedToday: [], lastWeekly: 0 };
 let mastery = JSON.parse(localStorage.getItem('k_mastery')) || {}; 
@@ -102,29 +106,35 @@ let mastery = JSON.parse(localStorage.getItem('k_mastery')) || {};
 function show() {
     const f = document.getElementById('f'), b = document.getElementById('b'), wd = document.getElementById('wd');
     const i = L[id];
-    if (!i) { f.innerHTML = "目前沒有單字"; return; }
+    if (!i) { f.innerHTML = "目前沒有符合的單字"; document.getElementById('pc').innerText = "0 / 0"; return; }
 
     if (!qz) {
-        f.innerHTML = `<div class="ko">${i.k}</div><button onclick="spk(event)" style="background:none;font-size:30px;border:none;">🔊</button>`;
+        f.innerHTML = `<div class="ko">${i.k}</div><button onclick="spk(event)" style="background:none;font-size:35px;border:none;">🔊</button>`;
         b.innerHTML = `<div class="zh">${i.z}</div><div class="ex">${i.e}</div>
             <div class="difficulty-group">
-                <button class="diff-btn" style="background:#ff4d4d" onclick="setDiff('${i.k}', 0, event)">再次</button>
-                <button class="diff-btn" style="background:#fb923c" onclick="setDiff('${i.k}', 1, event)">困難</button>
-                <button class="diff-btn" style="background:#3b82f6" onclick="setDiff('${i.k}', 2, event)">尚可</button>
-                <button class="diff-btn" style="background:#22c55e" onclick="setDiff('${i.k}', 3, event)">簡單</button>
+                <button class="diff-btn" style="background:var(--again)" onclick="setDiff('${i.k}', 0, true, event)">再次</button>
+                <button class="diff-btn" style="background:var(--hard)" onclick="setDiff('${i.k}', 1, true, event)">困難</button>
+                <button class="diff-btn" style="background:var(--good)" onclick="setDiff('${i.k}', 2, true, event)">尚可</button>
+                <button class="diff-btn" style="background:var(--easy)" onclick="setDiff('${i.k}', 3, true, event)">簡單</button>
             </div>`;
     } else {
-        f.innerHTML = `<div class="zh">${i.z}</div><input type="text" id="qi" placeholder="輸入韓文..." onclick="event.stopPropagation()" style="width:80%;padding:10px;text-align:center;"><button onclick="chk(event)" style="margin-top:10px">檢查</button><div id="ms" style="margin-top:10px"></div>`;
-        b.innerHTML = `<div class="ko">${i.k}</div><div class="ex">${i.e}</div><button onclick="spk(event)" style="background:none;font-size:30px;border:none;">🔊</button>`;
+        f.innerHTML = `<div class="zh">${i.z}</div><input type="text" id="qi" placeholder="輸入韓文..." onclick="event.stopPropagation()" onkeypress="if(event.key==='Enter')chk(event)"><button onclick="chk(event)" style="background:var(--good); color:white; width:80%; border-radius:10px;">檢查答案</button><div id="ms" style="margin-top:15px; font-weight:bold; font-size:18px;"></div>`;
+        b.innerHTML = `<div class="ko">${i.k}</div><div class="ex">${i.e}</div><button onclick="spk(event)" style="background:none;font-size:35px;border:none;">🔊</button>`;
     }
     document.getElementById('pc').innerText = `${id + 1} / ${L.length}`;
     wd.classList.remove('flip');
     updateUI();
 }
 
-function setDiff(key, score, e) {
+function handleCardClick() {
+    if (!qz) {
+        document.getElementById('wd').classList.toggle('flip');
+    }
+}
+
+function setDiff(key, score, shouldMove, e) {
     if(e) e.stopPropagation();
-    mastery[key] = { s: score, t: Date.now() }; // 紀錄分數與時間
+    mastery[key] = { s: score, t: Date.now() };
     localStorage.setItem('k_mastery', JSON.stringify(mastery));
     
     if (!stats.learnedToday.includes(key)) {
@@ -132,42 +142,28 @@ function setDiff(key, score, e) {
         stats.todayCount++;
         saveStats();
     }
-    st(1, e);
+    if (shouldMove) st(1);
 }
 
 function updateUI() {
-    const now = new Date();
-    const todayStr = now.toDateString();
-    
-    // 檢查連勝與日期更新
+    const todayStr = new Date().toDateString();
     if (stats.lastDate !== todayStr) {
-        const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
-        if (stats.lastDate !== yesterday.toDateString()) stats.streak = 0;
-        stats.lastDate = todayStr;
-        stats.todayCount = 0;
-        stats.learnedToday = [];
-        saveStats();
+        stats.lastDate = todayStr; stats.todayCount = 0; stats.learnedToday = []; saveStats();
     }
-
-    const currentGoal = Math.min(10 + Math.floor(stats.streak / 7) * 10, 50);
+    const currentGoal = 10;
     const percent = Math.min((stats.todayCount / currentGoal) * 100, 100);
-    
     document.getElementById('progressFill').style.width = percent + '%';
     document.getElementById('progressText').innerText = `${stats.todayCount} / ${currentGoal}`;
     document.getElementById('streakDisplay').innerText = stats.streak;
 
-    if (percent === 100 && stats.lastGoalAchieved !== todayStr) {
-        stats.streak++;
-        stats.lastGoalAchieved = todayStr;
-        saveStats();
-        alert("🎉 達成目標！連勝 +1");
-    }
-
-    // 每週複習提醒邏輯 (7天一次)
     const sevenDays = 7 * 24 * 60 * 60 * 1000;
-    if (Date.now() - stats.lastWeekly > sevenDays) {
-        document.getElementById('weeklyAlert').style.display = 'block';
-    }
+    document.getElementById('weeklyAlert').style.display = (Date.now() - stats.lastWeekly > sevenDays) ? 'block' : 'none';
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.innerText = msg; t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 3000);
 }
 
 function startWeeklyReview() {
@@ -176,16 +172,15 @@ function startWeeklyReview() {
         const m = mastery[d.k];
         return m && m.t > sevenDaysAgo && (m.s === 0 || m.s === 1);
     });
+    
     if (L.length === 0) {
-        alert("本週表現完美，沒有需要複習的難題！");
+        showToast("本週表現完美，暫無難題！");
         stats.lastWeekly = Date.now(); saveStats();
-        document.getElementById('weeklyAlert').style.display = 'none';
         fltr();
     } else {
         id = 0; show();
         stats.lastWeekly = Date.now(); saveStats();
-        document.getElementById('weeklyAlert').style.display = 'none';
-        alert(`已為你篩選出本週不熟的 ${L.length} 個單字`);
+        showToast(`已篩選出本週不熟的 ${L.length} 個單字`);
     }
 }
 
@@ -195,37 +190,27 @@ function fltr() {
     else if (v === "再次") L = D.filter(d => mastery[d.k]?.s === 0);
     else if (v === "困難") L = D.filter(d => mastery[d.k]?.s === 1);
     else if (v === "本週複習") { startWeeklyReview(); return; }
-    else L = D.filter(d => d.c === v);
     id = 0; show();
 }
 
 function chk(e) {
     e.stopPropagation();
     const v = document.getElementById('qi').value.trim(), c = L[id], m = document.getElementById('ms');
-    if (v === c.k) { m.innerText = "✨ 正確"; m.style.color = "#22c55e"; setDiff(c.k, 2); }
-    else { m.innerText = "💪 錯誤"; m.style.color = "#ff4d4d"; setDiff(c.k, 0); }
-}
-
-function exportData() {
-    const data = JSON.stringify({stats, mastery});
-    const blob = new Blob([data], {type: 'text/plain'});
-    alert("請複製以下代碼並存起來：\n\n" + data);
-}
-
-function importData() {
-    const data = prompt("請貼上備份代碼：");
-    if (data) {
-        const parsed = JSON.parse(data);
-        localStorage.setItem('k_stats', JSON.stringify(parsed.stats));
-        localStorage.setItem('k_mastery', JSON.stringify(parsed.mastery));
-        location.reload();
+    if (v === c.k) { 
+        m.innerText = "✨ 正確！"; m.style.color = "var(--easy)"; 
+        setDiff(c.k, 2, false); 
+    } else { 
+        m.innerText = `💪 錯誤 (正確是: ${c.k})`; m.style.color = "var(--again)"; 
+        setDiff(c.k, 0, false); 
     }
 }
 
-function st(s, e) { if(e) e.stopPropagation(); id = (id + s + L.length) % L.length; show(); }
+function st(s, e) { if(e) e.stopPropagation(); if(L.length===0) return; id = (id + s + L.length) % L.length; show(); }
 function qzM() { qz = !qz; document.getElementById('mb').innerText = qz ? "切換學習" : "切換測驗"; show(); }
 function spk(e) { e.stopPropagation(); window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(L[id].k); u.lang = 'ko-KR'; window.speechSynthesis.speak(u); }
 function saveStats() { localStorage.setItem('k_stats', JSON.stringify(stats)); }
+function exportData() { prompt("請複製進度代碼：", JSON.stringify({stats, mastery})); }
+function importData() { const d = prompt("貼上備份代碼："); if(d){ const p=JSON.parse(d); localStorage.setItem('k_stats', JSON.stringify(p.stats)); localStorage.setItem('k_mastery', JSON.stringify(p.mastery)); location.reload(); }}
 
 window.onload = show;
 </script>
