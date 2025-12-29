@@ -79,9 +79,8 @@
     <div class="counter" id="num">0 / 0</div>
     <button class="nav-btn" onclick="next()">→</button>
 </div>
-
 <script>
-    // --- 這裡開始是單字資料庫 ---
+// --- 這裡開始是單字資料庫 ---
     const D = [// [地點方位]
     {k:"위", z:"上面", e:"책상 위에 책이 있어요.", c:"地點方位"},
     {k:"밑", z:"下面", e:"의자 밑에 고양이가 있어요.", c:"地點方位"},
@@ -184,6 +183,7 @@
     let currentList = [...D];
     let idx = 0;
     let isQuiz = false;
+    let showAnswer = false; // 控制是否顯示中文答案
 
     function render() {
         if (currentList.length === 0) {
@@ -195,21 +195,37 @@
         const item = currentList[idx];
         document.getElementById('tag').innerText = item.c;
         document.getElementById('kr').innerText = item.k;
-        document.getElementById('zh').innerText = item.z;
-        document.getElementById('ex').innerText = item.e;
-        document.getElementById('quiz-q').innerText = item.z;
+        
+        // 學習模式：點擊才顯示中文與例句
+        if (!isQuiz) {
+            document.getElementById('zh').innerText = showAnswer ? item.z : "點擊卡片看中文";
+            document.getElementById('ex').innerText = showAnswer ? item.e : "---";
+        } else {
+            document.getElementById('quiz-q').innerText = item.z;
+        }
+        
         document.getElementById('num').innerText = `${idx + 1} / ${currentList.length}`;
     }
+
+    // 點擊卡片切換顯示狀態
+    document.querySelector('.card').onclick = function(e) {
+        // 如果點到按鈕或輸入框則不觸發翻面
+        if(e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+        showAnswer = !showAnswer;
+        render();
+    };
 
     function filterList() {
         const val = document.getElementById('ct').value;
         currentList = (val === "全部") ? [...D] : D.filter(i => i.c === val);
         idx = 0;
+        showAnswer = false;
         render();
     }
 
     function toggleMode() {
         isQuiz = !isQuiz;
+        showAnswer = false;
         document.getElementById('study-area').classList.toggle('hidden');
         document.getElementById('quiz-area').classList.toggle('hidden');
         document.getElementById('mode-btn').innerText = isQuiz ? "返回學習" : "測驗模式";
@@ -218,17 +234,23 @@
 
     function checkAnswer() {
         const userIn = document.getElementById('quiz-in').value.trim();
+        const feedback = document.getElementById('quiz-q'); // 利用題目區顯示回饋
         if (userIn === currentList[idx].k) {
-            alert("答對了！🎉");
-            next();
-            document.getElementById('quiz-in').value = "";
+            feedback.innerText = "✅ 答對了！";
+            feedback.style.color = "#abd1c6";
+            setTimeout(() => {
+                feedback.style.color = "";
+                next();
+                document.getElementById('quiz-in').value = "";
+            }, 800);
         } else {
-            alert("錯囉，再試試看！提示：" + currentList[idx].k);
+            feedback.innerText = "❌ 提示：" + currentList[idx].k;
+            feedback.style.color = "#f9bc60";
         }
     }
 
-    function next() { if (idx < currentList.length - 1) { idx++; render(); } }
-    function prev() { if (idx > 0) { idx--; render(); } }
+    function next() { if (idx < currentList.length - 1) { idx++; showAnswer = false; render(); } }
+    function prev() { if (idx > 0) { idx--; showAnswer = false; render(); } }
 
     function speak() {
         const msg = new SpeechSynthesisUtterance(currentList[idx].k);
@@ -239,8 +261,6 @@
     window.onload = () => {
         document.getElementById('stats-total').innerText = `目前總單字量：${D.length} 字`;
         render();
-    };
-</script>
-
+    };<script>
 </body>
 </html>
