@@ -6,51 +6,34 @@
     <title>韓語 1000 單字王</title>
     <style>
         :root { --bg: #121212; --card: #1e1e26; --text: #e0e0e0; --accent: #ffd166; --primary: #06d6a0; --error: #ef476f; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; touch-action: manipulation; }
-        
-        /* 頁首與統計 */
-        .header { width: 100%; padding: 20px 0; background: #1a1a20; text-align: center; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; }
-        .stats { font-size: 0.85rem; color: var(--accent); margin-top: 4px; letter-spacing: 1px; }
-
-        /* 控制區 */
+        body { background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .header { width: 100%; padding: 20px 0; background: #1a1a20; text-align: center; border-bottom: 1px solid #333; }
+        .stats { font-size: 0.85rem; color: var(--accent); margin-top: 4px; }
         .controls { width: 90%; max-width: 400px; margin: 20px 0; display: flex; gap: 10px; }
-        select, .mode-btn { flex: 1; padding: 14px; border-radius: 12px; border: 1px solid #444; background: var(--card); color: white; font-size: 1rem; outline: none; transition: 0.2s; }
+        select, .mode-btn { flex: 1; padding: 14px; border-radius: 12px; border: 1px solid #444; background: var(--card); color: white; font-size: 1rem; }
         .mode-btn { background: var(--accent); color: #000; font-weight: bold; border: none; }
-        .mode-btn:active { transform: scale(0.95); }
-
-        /* 核心卡片 */
-        .card { width: 85%; max-width: 360px; height: 380px; background: var(--card); border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.4); padding: 20px; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid #333; }
-        .category-tag { position: absolute; top: 20px; left: 25px; font-size: 0.75rem; color: var(--primary); background: rgba(6, 214, 160, 0.1); padding: 5px 12px; border-radius: 20px; text-transform: uppercase; }
-        
-        /* 學習模式內容 */
-        .korean { font-size: 3.8rem; font-weight: 800; color: var(--accent); margin-bottom: 5px; }
-        .chinese { font-size: 1.8rem; font-weight: 500; color: #fff; margin: 15px 0; min-height: 2.2rem; }
-        .example { font-size: 1rem; color: #aaa; line-height: 1.5; padding: 0 15px; min-height: 3rem; }
-        .hint-text { font-size: 0.8rem; color: #555; margin-top: 10px; }
-
-        /* 測驗模式內容 */
+        .card { width: 85%; max-width: 360px; height: 380px; background: var(--card); border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.4); padding: 20px; border: 1px solid #333; }
+        .category-tag { position: absolute; top: 20px; left: 25px; font-size: 0.75rem; color: var(--primary); background: rgba(6, 214, 160, 0.1); padding: 5px 12px; border-radius: 20px; }
+        .korean { font-size: 3.5rem; font-weight: 800; color: var(--accent); margin-bottom: 5px; }
+        .chinese { font-size: 1.8rem; color: #fff; margin: 15px 0; min-height: 2.2rem; }
+        .example { font-size: 1rem; color: #aaa; line-height: 1.5; min-height: 3rem; }
         #quiz-area { width: 100%; }
         .quiz-q-text { font-size: 1.8rem; color: #fff; margin-bottom: 20px; }
-        .quiz-input { width: 85%; padding: 15px; border-radius: 12px; border: 2px solid #444; background: #121212; color: white; text-align: center; font-size: 1.4rem; transition: 0.3s; }
-        .quiz-input:focus { border-color: var(--accent); outline: none; }
-        .check-btn { margin-top: 15px; padding: 12px 30px; border-radius: 10px; background: var(--primary); color: #000; font-weight: bold; border: none; font-size: 1rem; }
-
-        /* 按鈕與導航 */
-        .audio-btn { margin-top: 20px; font-size: 2.2rem; background: none; border: none; cursor: pointer; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .quiz-input { width: 80%; padding: 15px; border-radius: 12px; border: 2px solid #444; background: #121212; color: white; text-align: center; font-size: 1.4rem; }
+        .check-btn { margin-top: 15px; padding: 12px 30px; border-radius: 10px; background: var(--primary); color: #000; font-weight: bold; border: none; }
+        .audio-btn { margin-top: 20px; font-size: 2.2rem; background: none; border: none; cursor: pointer; }
         .nav-btns { width: 85%; max-width: 400px; display: flex; justify-content: space-between; margin-top: 35px; align-items: center; }
-        .nav-btn { background: #2a2a35; color: white; border-radius: 18px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; border: 1px solid #444; }
-        .counter { font-size: 1.2rem; font-weight: 600; color: #888; }
-        
+        .nav-btn { background: #2a2a35; color: white; border-radius: 18px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; border: 1px solid #444; cursor: pointer; }
         .hidden { display: none !important; }
-        .correct { color: var(--primary) !important; font-weight: bold; }
-        .wrong { color: var(--error) !important; font-weight: bold; }
+        .correct { color: var(--primary) !important; }
+        .wrong { color: var(--error) !important; }
     </style>
 </head>
 <body>
 
 <div class="header">
     <strong>🇰🇷 韓語 1000 單字王</strong>
-    <div class="stats" id="stats-total">正在載入單字庫...</div>
+    <div class="stats" id="stats-total">載入中...</div>
 </div>
 
 <div class="controls">
@@ -61,77 +44,116 @@
         <option value="食物">🍎 食物飲品</option>
         <option value="交通">🚗 交通工具</option>
         <option value="時間">⏰ 時間日期</option>
-        <option value="動物">🐶 動物世界</option>
-        <option value="身體部位">💪 身體部位</option>
-        <option value="心情外貌">😊 心情外貌</option>
-        <option value="連接詞副詞">🔗 連接詞副詞</option>
-        <option value="衣物配飾">👗 衣物配飾</option>
-        <option value="色彩">🎨 常用色彩</option>
-        <option value="學習">📚 學習教育</option>
-        <option value="健康">🏥 醫療健康</option>
-        <option value="家族">👨‍👩‍👧 家族稱呼</option>
-        <option value="工作">💼 職業工作</option>
-        <option value="興趣">🎸 興趣愛好</option>
         <option value="動作">🏃 常用動作</option>
         <option value="形容詞">✨ 常用形容詞</option>
-        <option value="生活名詞">🧸 生活名詞</option>
     </select>
     <button class="mode-btn" onclick="toggleMode()" id="mode-btn">測驗模式</button>
 </div>
 
 <div class="card" id="main-card">
-    <div class="category-tag" id="tag">分類</div>
-    
+    <div class="category-tag" id="tag">分類名</div>
     <div id="study-area">
         <div class="korean" id="kr">---</div>
         <div class="chinese" id="zh">點擊看答案</div>
         <div class="example" id="ex">---</div>
-        <div class="hint-text" id="hint">TAB TO REVEAL</div>
     </div>
-
     <div id="quiz-area" class="hidden">
-        <div class="quiz-q-text" id="quiz-q">載入中...</div>
-        <input type="text" class="quiz-input" id="quiz-in" placeholder="輸入韓文..." autocomplete="off" spellcheck="false">
+        <div class="quiz-q-text" id="quiz-q">題目載入中</div>
+        <input type="text" id="quiz-in" class="quiz-input" placeholder="輸入韓文..." autocomplete="off">
         <br>
         <button class="check-btn" onclick="checkAnswer()">檢查答案</button>
     </div>
-
     <button class="audio-btn" onclick="speak(event)">🔊</button>
 </div>
 
 <div class="nav-btns">
     <button class="nav-btn" onclick="prev()">‹</button>
-    <div class="counter" id="num">0 / 0</div>
+    <div id="num">0 / 0</div>
     <button class="nav-btn" onclick="next()">›</button>
 </div>
 
 <script>
-    // --- 單字資料區 (請在此貼上代碼) ---
+    // --- 這裡預填了 5 個單字供你測試，測試成功後再把剩下的貼進來 ---
     const D = [
-        // 單字內容將從這裡開始輸入
+        {k:"위", z:"上面", e:"책상 위에 책이 있어요.", c:"地點方位"},
+        {k:"밑", z:"下面", e:"의자 밑에 고양이가 있어요.", c:"地點方位"},
+        {k:"사과", z:"蘋果", e:"사과가 빨개요.", c:"食物"},
+        {k:"물", z:"水", e:"물을 마셔요.", c:"食物"},
+        {k:"가다", z:"去", e:"학교에 가요.", c:"動作"}
     ];
 
     let currentList = [...D];
     let idx = 0;
     let isQuiz = false;
-    let isFlipped = false; // 控制卡片是否翻面
+    let isFlipped = false;
 
     function render() {
-        const statsEl = document.getElementById('stats-total');
-        const numEl = document.getElementById('num');
-        
-        if (D.length === 0) {
-            statsEl.innerText = "請在程式碼中輸入單字";
-            return;
-        }
-
-        if (currentList.length === 0) {
-            document.getElementById('kr').innerText = "空";
-            document.getElementById('zh').innerText = "此分類暫無單字";
-            numEl.innerText = "0 / 0";
-            return;
-        }
-
+        if (currentList.length === 0) return;
         const item = currentList[idx];
+        document.getElementById('stats-total').innerText = `單字庫總量：${D.length} 字`;
+        document.getElementById('num').innerText = `${idx + 1} / ${currentList.length}`;
         document.getElementById('tag').innerText = item.c;
-        statsEl.innerText = `單字庫總量：${D.length
+
+        if (!isQuiz) {
+            document.getElementById('kr').innerText = item.k;
+            document.getElementById('zh').innerText = isFlipped ? item.z : "點擊看答案";
+            document.getElementById('ex').innerText = isFlipped ? item.e : "---";
+        } else {
+            document.getElementById('quiz-q').innerText = item.z;
+            document.getElementById('quiz-q').className = "quiz-q-text";
+        }
+    }
+
+    document.getElementById('main-card').onclick = function(e) {
+        if (isQuiz || e.target.closest('.audio-btn')) return;
+        isFlipped = !isFlipped;
+        render();
+    };
+
+    function toggleMode() {
+        isQuiz = !isQuiz;
+        isFlipped = false;
+        document.getElementById('study-area').classList.toggle('hidden');
+        document.getElementById('quiz-area').classList.toggle('hidden');
+        document.getElementById('mode-btn').innerText = isQuiz ? "返回學習" : "測驗模式";
+        render();
+    }
+
+    function checkAnswer() {
+        const userIn = document.getElementById('quiz-in').value.trim();
+        const correct = currentList[idx].k;
+        const qText = document.getElementById('quiz-q');
+
+        if (userIn === correct) {
+            qText.innerText = "✅ 正確！";
+            qText.classList.add("correct");
+            setTimeout(() => {
+                next();
+                document.getElementById('quiz-in').value = "";
+            }, 800);
+        } else {
+            qText.innerText = "❌ 答案是：" + correct;
+            qText.classList.add("wrong");
+        }
+    }
+
+    function filterList() {
+        const val = document.getElementById('ct').value;
+        currentList = (val === "全部") ? [...D] : D.filter(i => i.c === val);
+        idx = 0; isFlipped = false; render();
+    }
+
+    function next() { if (idx < currentList.length - 1) { idx++; isFlipped = false; render(); } }
+    function prev() { if (idx > 0) { idx--; isFlipped = false; render(); } }
+
+    function speak(e) {
+        if (e) e.stopPropagation();
+        const msg = new SpeechSynthesisUtterance(currentList[idx].k);
+        msg.lang = 'ko-KR';
+        window.speechSynthesis.speak(msg);
+    }
+
+    window.onload = render;
+</script>
+</body>
+</html>
