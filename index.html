@@ -5,32 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>韓語 1000 單字王</title>
     <style>
-        :root { --bg: #1a1c2c; --card: #25283d; --text: #eff1f5; --accent: #f9bc60; --primary: #abd1c6; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .header { width: 100%; padding: 15px; background: var(--card); text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3); position: sticky; top: 0; z-index: 100; }
-        .stats { font-size: 0.9rem; color: var(--accent); margin-top: 5px; }
-        .controls { width: 90%; max-width: 400px; margin: 15px 0; display: flex; gap: 10px; }
-        select, button { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #444; background: var(--card); color: white; font-size: 1rem; }
-        button { background: var(--accent); color: var(--bg); font-weight: bold; }
-        .card { width: 85%; max-width: 350px; height: 350px; background: var(--card); border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); padding: 20px; }
-        .category-tag { position: absolute; top: 15px; left: 20px; font-size: 0.8rem; color: var(--primary); background: rgba(171,209,198,0.1); padding: 4px 10px; border-radius: 15px; }
-        .korean { font-size: 3.5rem; font-weight: bold; color: var(--accent); margin-bottom: 10px; }
-        .chinese { font-size: 1.5rem; opacity: 0.9; margin: 10px 0; }
-        .example { font-size: 0.95rem; color: var(--primary); line-height: 1.4; padding: 0 10px; }
-        .audio-btn { margin-top: 20px; font-size: 2rem; background: none; border: none; cursor: pointer; }
-        .nav-btns { width: 90%; max-width: 400px; display: flex; justify-content: space-between; margin-top: 25px; align-items: center; }
-        .nav-btn { background: var(--card); color: white; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; text-decoration: none; border: 1px solid #444; }
-        .counter { font-size: 1.1rem; font-weight: bold; }
+        :root { --bg: #121212; --card: #1e1e26; --text: #e0e0e0; --accent: #ffd166; --primary: #06d6a0; --error: #ef476f; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; touch-action: manipulation; }
+        
+        /* 頁首與統計 */
+        .header { width: 100%; padding: 20px 0; background: #1a1a20; text-align: center; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; }
+        .stats { font-size: 0.85rem; color: var(--accent); margin-top: 4px; letter-spacing: 1px; }
+
+        /* 控制區 */
+        .controls { width: 90%; max-width: 400px; margin: 20px 0; display: flex; gap: 10px; }
+        select, .mode-btn { flex: 1; padding: 14px; border-radius: 12px; border: 1px solid #444; background: var(--card); color: white; font-size: 1rem; outline: none; transition: 0.2s; }
+        .mode-btn { background: var(--accent); color: #000; font-weight: bold; border: none; }
+        .mode-btn:active { transform: scale(0.95); }
+
+        /* 核心卡片 */
+        .card { width: 85%; max-width: 360px; height: 380px; background: var(--card); border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.4); padding: 20px; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid #333; }
+        .category-tag { position: absolute; top: 20px; left: 25px; font-size: 0.75rem; color: var(--primary); background: rgba(6, 214, 160, 0.1); padding: 5px 12px; border-radius: 20px; text-transform: uppercase; }
+        
+        /* 學習模式內容 */
+        .korean { font-size: 3.8rem; font-weight: 800; color: var(--accent); margin-bottom: 5px; }
+        .chinese { font-size: 1.8rem; font-weight: 500; color: #fff; margin: 15px 0; min-height: 2.2rem; }
+        .example { font-size: 1rem; color: #aaa; line-height: 1.5; padding: 0 15px; min-height: 3rem; }
+        .hint-text { font-size: 0.8rem; color: #555; margin-top: 10px; }
+
+        /* 測驗模式內容 */
+        #quiz-area { width: 100%; }
+        .quiz-q-text { font-size: 1.8rem; color: #fff; margin-bottom: 20px; }
+        .quiz-input { width: 85%; padding: 15px; border-radius: 12px; border: 2px solid #444; background: #121212; color: white; text-align: center; font-size: 1.4rem; transition: 0.3s; }
+        .quiz-input:focus { border-color: var(--accent); outline: none; }
+        .check-btn { margin-top: 15px; padding: 12px 30px; border-radius: 10px; background: var(--primary); color: #000; font-weight: bold; border: none; font-size: 1rem; }
+
+        /* 按鈕與導航 */
+        .audio-btn { margin-top: 20px; font-size: 2.2rem; background: none; border: none; cursor: pointer; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .nav-btns { width: 85%; max-width: 400px; display: flex; justify-content: space-between; margin-top: 35px; align-items: center; }
+        .nav-btn { background: #2a2a35; color: white; border-radius: 18px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; border: 1px solid #444; }
+        .counter { font-size: 1.2rem; font-weight: 600; color: #888; }
+        
         .hidden { display: none !important; }
-        #quiz-area { width: 100%; display: flex; flex-direction: column; align-items: center; }
-        .quiz-input { width: 80%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid var(--primary); background: #333; color: white; text-align: center; font-size: 1.2rem; }
+        .correct { color: var(--primary) !important; font-weight: bold; }
+        .wrong { color: var(--error) !important; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="header">
     <strong>🇰🇷 韓語 1000 單字王</strong>
-    <div class="stats" id="stats-total">總量載入中...</div>
+    <div class="stats" id="stats-total">正在載入單字庫...</div>
 </div>
 
 <div class="controls">
@@ -56,211 +76,62 @@
         <option value="形容詞">✨ 常用形容詞</option>
         <option value="生活名詞">🧸 生活名詞</option>
     </select>
-    <button onclick="toggleMode()" id="mode-btn">測驗模式</button>
+    <button class="mode-btn" onclick="toggleMode()" id="mode-btn">測驗模式</button>
 </div>
 
-<div class="card">
+<div class="card" id="main-card">
     <div class="category-tag" id="tag">分類</div>
+    
     <div id="study-area">
         <div class="korean" id="kr">---</div>
-        <div class="chinese" id="zh">載入中...</div>
+        <div class="chinese" id="zh">點擊看答案</div>
         <div class="example" id="ex">---</div>
+        <div class="hint-text" id="hint">TAB TO REVEAL</div>
     </div>
+
     <div id="quiz-area" class="hidden">
-        <div class="chinese" id="quiz-q">載入中...</div>
-        <input type="text" class="quiz-input" id="quiz-in" placeholder="請輸入韓文..." autocomplete="off">
-        <button onclick="checkAnswer()">檢查答案</button>
+        <div class="quiz-q-text" id="quiz-q">載入中...</div>
+        <input type="text" class="quiz-input" id="quiz-in" placeholder="輸入韓文..." autocomplete="off" spellcheck="false">
+        <br>
+        <button class="check-btn" onclick="checkAnswer()">檢查答案</button>
     </div>
-    <button class="audio-btn" onclick="speak()">🔊</button>
+
+    <button class="audio-btn" onclick="speak(event)">🔊</button>
 </div>
 
 <div class="nav-btns">
-    <button class="nav-btn" onclick="prev()">←</button>
+    <button class="nav-btn" onclick="prev()">‹</button>
     <div class="counter" id="num">0 / 0</div>
-    <button class="nav-btn" onclick="next()">→</button>
+    <button class="nav-btn" onclick="next()">›</button>
 </div>
+
 <script>
-// --- 這裡開始是單字資料庫 ---
-    const D = [// [地點方位]
-    {k:"위", z:"上面", e:"책상 위에 책이 있어요.", c:"地點方位"},
-    {k:"밑", z:"下面", e:"의자 밑에 고양이가 있어요.", c:"地點方位"},
-    {k:"앞", z:"前面", e:"학교 앞에서 만나요.", c:"地點方位"},
-    {k:"뒤", z:"後面", e:"은행 뒤에 건물이 있어요.", c:"地點方位"},
-    {k:"옆", z:"旁邊", e:"제 옆에 앉으세요.", c:"地點方位"},
-    {k:"안", z:"裡面", e:"가방 안에 지갑이 있어요.", c:"地點方位"},
-    {k:"밖", z:"外面", e:"밖은 너무 추워요.", c:"地點方位"},
-    {k:"왼쪽", z:"左邊", e:"왼쪽으로 가세요.", c:"地點方位"},
-    {k:"오른쪽", z:"右邊", e:"오른쪽으로 도세요.", c:"地點方位"},
-    {k:"여기", z:"這裡", e:"여기에 앉으세요.", c:"地點方位"},
-    {k:"거기", z:"那裡(近)", e:"거기 누구 있어요?", c:"地點方位"},
-    {k:"저기", z:"那裡(遠)", e:"저기 보세요!", c:"地點方位"},
-
-    // [日常]
-    {k:"약속", z:"約定/約會", e:"내일 친구랑 약속이 있어요.", c:"日常"},
-    {k:"인사", z:"問候", e:"선생님께 인사드려요.", c:"日常"},
-    {k:"부탁", z:"拜託", e:"부탁이 하나 있어요.", c:"日常"},
-    {k:"축하", z:"祝賀", e:"생일을 축하해요!", c:"日常"},
-    {k:"사과", z:"道歉", e:"친구에게 사과했어요.", c:"日常"},
-    {k:"이해", z:"理解", e:"이해가 안 가요.", c:"日常"},
-    {k:"비밀", z:"秘密", e:"비밀을 지켜 주세요.", c:"日常"},
-    {k:"미래", z:"未來", e:"미래를 계획해요.", c:"日常"},
-    {k:"과거", z:"過去", e:"과거는 잊으세요.", c:"日常"},
-    {k:"선물", z:"禮物", e:"생일 선물을 받았어요.", c:"日常"},
-
-    // [食物]
-    {k:"사과", z:"蘋果", e:"사과가 빨개요.", c:"食物"},
-    {k:"물", z:"水", e:"물을 마셔요.", c:"食物"},
-    {k:"밥", z:"飯", e:"밥을 먹었어요?", c:"食物"},
-    {k:"김치", z:"泡菜", e:"김치가 매워요.", c:"食物"},
-    {k:"고기", z:"肉", e:"불고기를 좋아해요.", c:"食物"},
-    {k:"우유", z:"牛奶", e:"우유를 마셔요.", c:"食物"},
-    {k:"빵", z:"麵包", e:"빵이 맛있어요.", c:"食物"},
-    {k:"식당", z:"餐廳", e:"식당에서 밥을 먹어요.", c:"食物"},
-    {k:"메뉴", z:"菜單", e:"메뉴판 좀 주세요.", c:"食物"},
-    {k:"물고기", z:"魚", e:"바다에 물고기가 많아요.", c:"食物"},
-
-    // [交通]
-    {k:"버스", z:"公車", e:"버스를 타고 가요.", c:"交通"},
-    {k:"지하철", z:"地鐵", e:"지하철이 빨라요.", c:"交通"},
-    {k:"택시", z:"計程車", e:"택시를 잡아요.", c:"交通"},
-    {k:"기차", z:"火車", e:"기차표를 예매해요.", c:"交通"},
-    {k:"비행기", z:"飛機", e:"비행기를 타고 여행 가요.", c:"交通"},
-    {k:"역", z:"站", e:"서울역에서 내려요.", c:"交通"},
-    {k:"공항", z:"機場", e:"인천공항에 가요.", c:"交通"},
-    {k:"자전거", z:"腳踏車", e:"공원에서 자전거를 타요.", c:"交通"},
-
-    // [時間]
-    {k:"오늘", z:"今天", e:"오늘은 월요일이에요.", c:"時間"},
-    {k:"내일", z:"明天", e:"내일 만나요.", c:"時間"},
-    {k:"어제", z:"昨天", e:"어제 비가 왔어요.", c:"時間"},
-    {k:"지금", z:"現在", e:"지금 몇 시예요?", c:"時間"},
-    {k:"시간", z:"時間/小時", e:"시간이 없어요.", c:"時間"},
-    {k:"주말", z:"週末", e:"주말에 뭐 해요?", c:"時間"},
-    {k:"아침", z:"早上", e:"아침을 먹어요.", c:"時間"},
-    {k:"저녁", z:"晚上", e:"저녁에 운동해요.", c:"時間"},
-    {k:"새벽", z:"凌晨", e:"새벽에 일어났어요.", c:"時間"},
-
-    // [動作]
-    {k:"가다", z:"去", e:"학교에 가요.", c:"動作"},
-    {k:"오다", z:"來", e:"집에 와요.", c:"動作"},
-    {k:"먹다", z:"吃", e:"맛있게 드세요.", c:"動作"},
-    {k:"자다", z:"睡覺", e:"잘 자요.", c:"動作"},
-    {k:"일어나다", z:"起床", e:"일찍 일어나요.", c:"動作"},
-    {k:"씻다", z:"洗", e:"얼굴을 씻어요.", c:"動作"},
-    {k:"공부하다", z:"學習", e:"한국어를 공부해요.", c:"動作"},
-    {k:"운동하다", z:"運動", e:"매일 운동해요.", c:"動作"},
-    {k:"사랑하다", z:"愛", e:"가족을 사랑해요.", c:"動作"},
-    {k:"읽다", z:"讀", e:"책을 읽어요.", c:"動作"},
-    {k:"쓰다", z:"寫", e:"편지를 써요.", c:"動作"},
-    {k:"듣다", z:"聽", e:"음악을 들어요.", c:"動作"},
-    {k:"말하다", z:"說", e:"천천히 말해 주세요.", c:"動作"},
-
-    // [形容詞]
-    {k:"크다", z:"大", e:"키가 커요.", c:"形容詞"},
-    {k:"작다", z:"小", e:"방이 작아요.", c:"形容詞"},
-    {k:"좋다", z:"好", e:"날씨가 좋아요.", c:"形容詞"},
-    {k:"나쁘다", z:"壞/不好", e:"기분이 나빠요.", c:"形容詞"},
-    {k:"조용하다", z:"安靜", e:"도서관은 조용해요.", c:"形容詞"},
-    {k:"시끄럽다", z:"吵鬧", e:"밖이 너무 시끄러워요.", c:"形容詞"},
-    {k:"비싸다", z:"貴", e:"이 옷은 너무 비싸요.", c:"形容詞"},
-    {k:"싸다", z:"便宜", e:"시장은 물건이 싸요.", c:"形容詞"},
-    {k:"어렵다", z:"難", e:"시험이 어려워요.", c:"形容詞"},
-    {k:"쉽다", z:"容易", e:"한국어가 쉬워요.", c:"形容詞"},
-    {k:"멀다", z:"遠", e:"집이 너무 멀어요.", c:"形容詞"},
-    {k:"가깝다", z:"近", e:"학교가 가까워요.", c:"形容詞"},
-
-    // [生活名詞]
-    {k:"가방", z:"包包", e:"가방이 무거워요.", c:"生活名詞"},
-    {k:"지갑", z:"錢包", e:"지갑을 잃어버렸어요.", c:"生活名詞"},
-    {k:"휴대폰", z:"手機", e:"휴대폰 번호가 뭐예요?", c:"生活名詞"},
-    {k:"옷", z:"衣服", e:"예쁜 옷을 샀어요.", c:"生活名詞"},
-    {k:"신발", z:"鞋子", e:"신발을 신어요.", c:"生活名詞"},
-    {k:"우산", z:"雨傘", e:"비가 와서 우산을 써요.", c:"生活名詞"},
-    {k:"안경", z:"眼鏡", e:"안경을 썼어요.", c:"生活名詞"},
-    {k:"돈", z:"錢", e:"돈이 얼마나 있어요?", c:"生活名詞"}
+    // --- 單字資料區 (請在此貼上代碼) ---
+    const D = [
+        // 單字內容將從這裡開始輸入
     ];
 
     let currentList = [...D];
     let idx = 0;
     let isQuiz = false;
-    let showAnswer = false; // 控制是否顯示中文答案
+    let isFlipped = false; // 控制卡片是否翻面
 
     function render() {
-        if (currentList.length === 0) {
-            document.getElementById('kr').innerText = "無資料";
-            document.getElementById('zh').innerText = "此分類暫無單字";
-            document.getElementById('num').innerText = "0 / 0";
+        const statsEl = document.getElementById('stats-total');
+        const numEl = document.getElementById('num');
+        
+        if (D.length === 0) {
+            statsEl.innerText = "請在程式碼中輸入單字";
             return;
         }
+
+        if (currentList.length === 0) {
+            document.getElementById('kr').innerText = "空";
+            document.getElementById('zh').innerText = "此分類暫無單字";
+            numEl.innerText = "0 / 0";
+            return;
+        }
+
         const item = currentList[idx];
         document.getElementById('tag').innerText = item.c;
-        document.getElementById('kr').innerText = item.k;
-        
-        // 學習模式：點擊才顯示中文與例句
-        if (!isQuiz) {
-            document.getElementById('zh').innerText = showAnswer ? item.z : "點擊卡片看中文";
-            document.getElementById('ex').innerText = showAnswer ? item.e : "---";
-        } else {
-            document.getElementById('quiz-q').innerText = item.z;
-        }
-        
-        document.getElementById('num').innerText = `${idx + 1} / ${currentList.length}`;
-    }
-
-    // 點擊卡片切換顯示狀態
-    document.querySelector('.card').onclick = function(e) {
-        // 如果點到按鈕或輸入框則不觸發翻面
-        if(e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
-        showAnswer = !showAnswer;
-        render();
-    };
-
-    function filterList() {
-        const val = document.getElementById('ct').value;
-        currentList = (val === "全部") ? [...D] : D.filter(i => i.c === val);
-        idx = 0;
-        showAnswer = false;
-        render();
-    }
-
-    function toggleMode() {
-        isQuiz = !isQuiz;
-        showAnswer = false;
-        document.getElementById('study-area').classList.toggle('hidden');
-        document.getElementById('quiz-area').classList.toggle('hidden');
-        document.getElementById('mode-btn').innerText = isQuiz ? "返回學習" : "測驗模式";
-        render();
-    }
-
-    function checkAnswer() {
-        const userIn = document.getElementById('quiz-in').value.trim();
-        const feedback = document.getElementById('quiz-q'); // 利用題目區顯示回饋
-        if (userIn === currentList[idx].k) {
-            feedback.innerText = "✅ 答對了！";
-            feedback.style.color = "#abd1c6";
-            setTimeout(() => {
-                feedback.style.color = "";
-                next();
-                document.getElementById('quiz-in').value = "";
-            }, 800);
-        } else {
-            feedback.innerText = "❌ 提示：" + currentList[idx].k;
-            feedback.style.color = "#f9bc60";
-        }
-    }
-
-    function next() { if (idx < currentList.length - 1) { idx++; showAnswer = false; render(); } }
-    function prev() { if (idx > 0) { idx--; showAnswer = false; render(); } }
-
-    function speak() {
-        const msg = new SpeechSynthesisUtterance(currentList[idx].k);
-        msg.lang = 'ko-KR';
-        window.speechSynthesis.speak(msg);
-    }
-
-    window.onload = () => {
-        document.getElementById('stats-total').innerText = `目前總單字量：${D.length} 字`;
-        render();
-    };<script>
-</body>
-</html>
+        statsEl.innerText = `單字庫總量：${D.length
