@@ -3,43 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>韓語 1000 單字挑戰</title>
+    <title>韓語 1000 單字王</title>
     <style>
         :root { --bg: #1a1c2c; --card: #25283d; --text: #eff1f5; --accent: #f9bc60; --primary: #abd1c6; }
-        body { background: var --bg; color: var --text; font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
-        .header { width: 100%; padding: 15px; background: var --card; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3); position: sticky; top: 0; z-index: 100; }
-        .stats { font-size: 0.9rem; color: var --accent; margin-top: 5px; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .header { width: 100%; padding: 15px; background: var(--card); text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3); position: sticky; top: 0; z-index: 100; }
+        .stats { font-size: 0.9rem; color: var(--accent); margin-top: 5px; }
         .controls { width: 90%; max-width: 400px; margin: 15px 0; display: flex; gap: 10px; }
-        select, button { flex: 1; padding: 12px; border-radius: 8px; border: none; background: var --card; color: white; font-size: 1rem; border: 1px solid #444; }
-        button { background: var --accent; color: var --bg; font-weight: bold; cursor: pointer; }
-        .card { width: 85%; max-width: 350px; height: 350px; background: var --card; border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); padding: 20px; transition: 0.3s; }
-        .category-tag { position: absolute; top: 15px; left: 20px; font-size: 0.8rem; color: var --primary; background: rgba(171,209,198,0.1); padding: 4px 10px; border-radius: 15px; }
-        .korean { font-size: 3.5rem; font-weight: bold; color: var --accent; margin-bottom: 10px; }
+        select, button { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #444; background: var(--card); color: white; font-size: 1rem; }
+        button { background: var(--accent); color: var(--bg); font-weight: bold; }
+        .card { width: 85%; max-width: 350px; height: 350px; background: var(--card); border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); padding: 20px; }
+        .category-tag { position: absolute; top: 15px; left: 20px; font-size: 0.8rem; color: var(--primary); background: rgba(171,209,198,0.1); padding: 4px 10px; border-radius: 15px; }
+        .korean { font-size: 3.5rem; font-weight: bold; color: var(--accent); margin-bottom: 10px; }
         .chinese { font-size: 1.5rem; opacity: 0.9; margin: 10px 0; }
-        .example { font-size: 0.95rem; color: var --primary; padding: 0 10px; line-height: 1.4; font-style: italic; }
-        .audio-btn { margin-top: 20px; font-size: 2rem; cursor: pointer; background: none; border: none; padding: 10px; }
+        .example { font-size: 0.95rem; color: var(--primary); line-height: 1.4; padding: 0 10px; }
+        .audio-btn { margin-top: 20px; font-size: 2rem; background: none; border: none; cursor: pointer; }
         .nav-btns { width: 90%; max-width: 400px; display: flex; justify-content: space-between; margin-top: 25px; align-items: center; }
-        .nav-btn { background: var --card; color: white; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; text-decoration: none; }
+        .nav-btn { background: var(--card); color: white; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; text-decoration: none; border: 1px solid #444; }
         .counter { font-size: 1.1rem; font-weight: bold; }
         .hidden { display: none !important; }
-        /* 測驗模式樣式 */
-        .quiz-input { width: 80%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid var --primary; background: #333; color: white; text-align: center; font-size: 1.2rem; }
+        #quiz-area { width: 100%; display: flex; flex-direction: column; align-items: center; }
+        .quiz-input { width: 80%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid var(--primary); background: #333; color: white; text-align: center; font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <strong>🇰🇷 韓語核心單字庫</strong>
-    <div class="stats" id="stats-total">載入中...</div>
+    <strong>🇰🇷 韓語 1000 單字王</strong>
+    <div class="stats" id="stats-total">總量載入中...</div>
 </div>
 
 <div class="controls">
     <select id="ct" onchange="filterList()">
-        <option value="全部">全部單字 (1000)</option>
+        <option value="全部">全部單字</option>
         <option value="地點方位">📍 地點方位</option>
         <option value="日常">🏠 日常生活</option>
         <option value="食物">🍎 食物飲品</option>
-        <option value="交通">🚗 交通旅遊</option>
+        <option value="交通">🚗 交通工具</option>
         <option value="時間">⏰ 時間日期</option>
         <option value="動物">🐶 動物世界</option>
         <option value="身體部位">💪 身體部位</option>
@@ -54,151 +54,37 @@
         <option value="興趣">🎸 興趣愛好</option>
         <option value="動作">🏃 常用動作</option>
         <option value="形容詞">✨ 常用形容詞</option>
+        <option value="生活名詞">🧸 生活名詞</option>
     </select>
-    <button onclick="toggleMode()" id="mode-btn">切換測驗</button>
+    <button onclick="toggleMode()" id="mode-btn">測驗模式</button>
 </div>
 
-<div class="card" id="card">
+<div class="card">
     <div class="category-tag" id="tag">分類</div>
     <div id="study-area">
-        <div class="korean" id="kr">안녕하세요</div>
-        <div class="chinese" id="zh">你好</div>
-        <div class="example" id="ex">만나서 반가워요.</div>
+        <div class="korean" id="kr">---</div>
+        <div class="chinese" id="zh">載入中...</div>
+        <div class="example" id="ex">---</div>
     </div>
     <div id="quiz-area" class="hidden">
-        <div class="chinese" id="quiz-q">你好</div>
-        <input type="text" class="quiz-input" id="quiz-in" placeholder="請輸入韓文..." autofocus>
-        <button onclick="checkAnswer()">檢查</button>
+        <div class="chinese" id="quiz-q">載入中...</div>
+        <input type="text" class="quiz-input" id="quiz-in" placeholder="請輸入韓文..." autocomplete="off">
+        <button onclick="checkAnswer()">檢查答案</button>
     </div>
     <button class="audio-btn" onclick="speak()">🔊</button>
 </div>
 
 <div class="nav-btns">
-    <a href="#" class="nav-btn" onclick="prev()">←</a>
-    <div class="counter" id="num">1 / 1000</div>
-    <a href="#" class="nav-btn" onclick="next()">→</a>
+    <button class="nav-btn" onclick="prev()">←</button>
+    <div class="counter" id="num">0 / 0</div>
+    <button class="nav-btn" onclick="next()">→</button>
 </div>
 
 <script>
-    // --- 完整 1000 單字資料庫 ---
-    // 這裡僅展示結構，下方會包含你之前所有的單字內容整理
-    const D = [// [地點方位]
-    {k:"위", z:"上面", e:"책상 위에 책이 있어요.", c:"地點方位"},
-    {k:"밑", z:"下面", e:"의자 밑에 고양이가 있어요.", c:"地點方位"},
-    {k:"앞", z:"前面", e:"학교 앞에서 만나요.", c:"地點方位"},
-    {k:"뒤", z:"後面", e:"은행 뒤에 건물이 있어요.", c:"地點方位"},
-    {k:"옆", z:"旁邊", e:"제 옆에 앉으세요.", c:"地點方位"},
-    {k:"안", z:"裡面", e:"가방 안에 지갑이 있어요.", c:"地點方位"},
-    {k:"밖", z:"外面", e:"밖은 너무 추워요.", c:"地點方位"},
-    {k:"왼쪽", z:"左邊", e:"왼쪽으로 가세요.", c:"地點方位"},
-    {k:"오른쪽", z:"右邊", e:"오른쪽으로 도세요.", c:"地點方位"},
-    {k:"여기", z:"這裡", e:"여기에 앉으세요.", c:"地點方位"},
-    {k:"거기", z:"那裡(近)", e:"거기 누구 있어요?", c:"地點方位"},
-    {k:"저기", z:"那裡(遠)", e:"저기 보세요!", c:"地點方位"},
-
-    // [日常]
-    {k:"약속", z:"約定/約會", e:"내일 친구랑 약속이 있어요.", c:"日常"},
-    {k:"인사", z:"問候", e:"선생님께 인사드려요.", c:"日常"},
-    {k:"부탁", z:"拜託", e:"부탁이 하나 있어요.", c:"日常"},
-    {k:"축하", z:"祝賀", e:"생일을 축하해요!", c:"日常"},
-    {k:"사과", z:"道歉", e:"친구에게 사과했어요.", c:"日常"},
-    {k:"이해", z:"理解", e:"이해가 안 가요.", c:"日常"},
-    {k:"비밀", z:"秘密", e:"비밀을 지켜 주세요.", c:"日常"},
-    {k:"미래", z:"未來", e:"미래를 계획해요.", c:"日常"},
-    {k:"과거", z:"過去", e:"과거는 잊으세요.", c:"日常"},
-    {k:"선물", z:"禮物", e:"생일 선물을 받았어요.", c:"日常"},
-
-    // [食物]
-    {k:"사과", z:"蘋果", e:"사과가 빨개요.", c:"食物"},
-    {k:"물", z:"水", e:"물을 마셔요.", c:"食物"},
-    {k:"밥", z:"飯", e:"밥을 먹었어요?", c:"食物"},
-    {k:"김치", z:"泡菜", e:"김치가 매워요.", c:"食物"},
-    {k:"고기", z:"肉", e:"불고기를 좋아해요.", c:"食物"},
-    {k:"우유", z:"牛奶", e:"우유를 마셔요.", c:"食物"},
-    {k:"빵", z:"麵包", e:"빵이 맛있어요.", c:"食物"},
-    {k:"식당", z:"餐廳", e:"식당에서 밥을 먹어요.", c:"食物"},
-    {k:"메뉴", z:"菜單", e:"메뉴판 좀 주세요.", c:"食物"},
-
-    // [交通]
-    {k:"버스", z:"公車", e:"버스를 타고 가요.", c:"交通"},
-    {k:"지하철", z:"地鐵", e:"지하철이 빨라요.", c:"交通"},
-    {k:"택시", z:"計程車", e:"택시를 잡아요.", c:"交通"},
-    {k:"기차", z:"火車", e:"기차표를 예매해요.", c:"交通"},
-    {k:"비행기", z:"飛機", e:"비행기를 타고 여행 가요.", c:"交通"},
-    {k:"역", z:"站", e:"서울역에서 내려요.", c:"交通"},
-    {k:"공항", z:"機場", e:"인천공항에 가요.", c:"交通"},
-
-    // [時間]
-    {k:"오늘", z:"今天", e:"오늘은 월요일이에요.", c:"時間"},
-    {k:"내일", z:"明天", e:"내일 만나요.", c:"時間"},
-    {k:"어제", z:"昨天", e:"어제 비가 왔어요.", c:"時間"},
-    {k:"지금", z:"現在", e:"지금 몇 시예요?", c:"時間"},
-    {k:"시간", z:"時間/小時", e:"시간이 없어요.", c:"時間"},
-    {k:"주말", z:"週末", e:"주말에 뭐 해요?", c:"時間"},
-    {k:"아침", z:"早上", e:"아침을 먹어요.", c:"時間"},
-    {k:"저녁", z:"晚上", e:"저녁에 운동해요.", c:"時間"},
-
-    // [家族]
-    {k:"가족", z:"家人", e:"가족이 몇 명이에요?", c:"家族"},
-    {k:"아버지", z:"父親", e:"아버지는 요리를 잘하세요.", c:"家族"},
-    {k:"어머니", z:"母親", e:"어머니가 보고 싶어요.", c:"家族"},
-    {k:"형", z:"哥哥(男稱)", e:"우리 형은 대학생이에요.", c:"家族"},
-    {k:"누나", z:"姐姐(男稱)", e:"누나가 결혼해요.", c:"家族"},
-    {k:"오빠", z:"哥哥(女稱)", e:"오빠가 밥을 사줬어요.", c:"家族"},
-    {k:"언니", z:"姐姐(女稱)", e:"언니랑 쇼핑 가요.", c:"家族"},
-    {k:"남동생", z:"弟弟", e:"남동생이 귀여워요.", c:"家族"},
-    {k:"여동생", z:"妹妹", e:"여동생은 고등학생이에요.", c:"家族"},
-
-    // [工作]
-    {k:"직업", z:"職業", e:"직업이 무엇입니까?", c:"工作"},
-    {k:"의사", z:"醫生", e:"병원에 의사가 있어요.", c:"工作"},
-    {k:"선생님", z:"老師", e:"선생님, 질문이 있어요.", c:"工作"},
-    {k:"회사원", z:"上班族", e:"저는 회사원입니다.", c:"工作"},
-    {k:"경찰", z:"警察", e:"경찰관이 도와줬어요.", c:"工作"},
-    {k:"가수", z:"歌手", e:"그 가수는 노래를 잘해요.", c:"工作"},
-
-    // [動作]
-    {k:"가다", z:"去", e:"학교에 가요.", c:"動作"},
-    {k:"오다", z:"來", e:"집에 와요.", c:"動作"},
-    {k:"먹다", z:"吃", e:"맛있게 드세요.", c:"動作"},
-    {k:"자다", z:"睡覺", e:"잘 자요.", c:"動作"},
-    {k:"일어나다", z:"起床", e:"일찍 일어나요.", c:"動作"},
-    {k:"씻다", z:"洗", e:"얼굴을 씻어요.", c:"動作"},
-    {k:"공부하다", z:"學習", e:"한국어를 공부해요.", c:"動作"},
-    {k:"운동하다", z:"運動", e:"매일 운동해요.", c:"動作"},
-    {k:"사랑하다", z:"愛", e:"가족을 사랑해요.", c:"動作"},
-
-    // [形容詞]
-    {k:"크다", z:"大", e:"키가 커요.", c:"形容詞"},
-    {k:"작다", z:"小", e:"방이 작아요.", c:"形容詞"},
-    {k:"좋다", z:"好", e:"날씨가 좋아요.", c:"形容詞"},
-    {k:"나쁘다", z:"壞/不好", e:"기분이 나쁘요.", c:"形容詞"},
-    {k:"조용하다", z:"安靜", e:"도서관은 조용해요.", c:"形容詞"},
-    {k:"시끄럽다", z:"吵鬧", e:"밖이 너무 시끄러워요.", c:"形容詞"},
-    {k:"비싸다", z:"貴", e:"이 옷은 너무 비싸요.", c:"形容詞"},
-    {k:"싸다", z:"便宜", e:"시장은 물건이 싸요.", c:"形容詞"},
-    {k:"어렵다", z:"難", e:"시험이 어려워요.", c:"形容詞"},
-    {k:"쉽다", z:"容易", e:"한국어가 쉬워요.", c:"形容詞"},
-
-    // [學習]
-    {k:"학교", z:"學校", e:"학교에 갑니다.", c:"學習"},
-    {k:"책", z:"書", e:"책을 읽어요.", c:"學習"},
-    {k:"공책", z:"筆記本", e:"공책에 써요.", c:"學習"},
-    {k:"연필", z:"鉛筆", e:"연필이 있어요?", c:"學習"},
-    {k:"시험", z:"考試", e:"내일 시험을 봐요.", c:"學習"},
-    {k:"숙제", z:"作業", e:"숙제를 다 했어요.", c:"學習"},
-
-    // [色彩]
-    {k:"빨간색", z:"紅色", e:"빨간색 사과.", c:"色彩"},
-    {k:"파란색", z:"藍色", e:"하늘은 파란색.", c:"色彩"},
-    {k:"노란색", z:"黃色", e:"노란색 나비.", c:"色彩"},
-    {k:"하얀색", z:"白色", e:"하얀색 눈.", c:"色彩"},
-    {k:"까만색", z:"黑色", e:"까만색 구두.", c:"色彩"}
-        
+    // --- 這裡開始是單字資料庫 ---
+    const D = [
+        // 請在此處貼上後續我給你的單字批次內容
     ];
-
-    // 隨機補齊至 1000 字的邏輯 (這部分我會在後台幫你整合所有你貼過的內容)
-    // 假設你已經把所有單字貼進 D 裡面了。
 
     let currentList = [...D];
     let idx = 0;
@@ -207,7 +93,7 @@
     function render() {
         if (currentList.length === 0) {
             document.getElementById('kr').innerText = "無資料";
-            document.getElementById('zh').innerText = "請選擇其他分類";
+            document.getElementById('zh').innerText = "此分類暫無單字";
             document.getElementById('num').innerText = "0 / 0";
             return;
         }
@@ -218,7 +104,6 @@
         document.getElementById('ex').innerText = item.e;
         document.getElementById('quiz-q').innerText = item.z;
         document.getElementById('num').innerText = `${idx + 1} / ${currentList.length}`;
-        document.getElementById('quiz-in').value = "";
     }
 
     function filterList() {
@@ -232,18 +117,18 @@
         isQuiz = !isQuiz;
         document.getElementById('study-area').classList.toggle('hidden');
         document.getElementById('quiz-area').classList.toggle('hidden');
-        document.getElementById('mode-btn').innerText = isQuiz ? "返回學習" : "切換測驗";
+        document.getElementById('mode-btn').innerText = isQuiz ? "返回學習" : "測驗模式";
         render();
     }
 
     function checkAnswer() {
         const userIn = document.getElementById('quiz-in').value.trim();
-        const correct = currentList[idx].k;
-        if (userIn === correct) {
+        if (userIn === currentList[idx].k) {
             alert("答對了！🎉");
             next();
+            document.getElementById('quiz-in').value = "";
         } else {
-            alert(`再試一次！提示：${correct}`);
+            alert("錯囉，再試試看！提示：" + currentList[idx].k);
         }
     }
 
@@ -253,11 +138,9 @@
     function speak() {
         const msg = new SpeechSynthesisUtterance(currentList[idx].k);
         msg.lang = 'ko-KR';
-        msg.rate = 0.8;
         window.speechSynthesis.speak(msg);
     }
 
-    // 初始化顯示總數
     window.onload = () => {
         document.getElementById('stats-total').innerText = `目前總單字量：${D.length} 字`;
         render();
